@@ -1,0 +1,15 @@
+89f73ad39d86e5f35f4579a157a392b6 *DESCRIPTION
+cf255ed90cb833438f7f86040d41d857 *NAMESPACE
+e28694f99a382e96461f95cafa4a372a *R/init.R
+71b5d67fe08a66a53c982ffd5f5d3b79 *build/vignette.rds
+ac8dffdea8a068799844ae58279510f2 *inst/doc/introduction.R
+f4c7395adbb97dc746df318d947acff6 *inst/doc/introduction.Rmd
+b38596906985c6c0c189b9defb3c5058 *inst/doc/introduction.html
+fea546fbca5444e1dadb7704084bbddb *man/get_sympy.Rd
+c576e8666e61fdeeb33da92fe54bd1b8 *man/have_sympy.Rd
+1894dd9c270badfbe73bb9ff5d24a6b6 *man/install_sympy.Rd
+1d8a07f395d5725bc56e8cbe85bba586 *man/sympy_version.Rd
+290110a96eb283b8b0cfbbcad895520a *tests/testthat.R
+676b9f0e3d599ea1b58479fcffec9ca6 *tests/testthat/helper-skip.R
+8af09a951e4974c5082b1bf5e8b883e3 *tests/testthat/test-init.R
+f4c7395adbb97dc746df318d947acff6 *vignettes/introduction.Rmd
