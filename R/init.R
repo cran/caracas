@@ -20,7 +20,14 @@ silent_prepare_sympy <- function() {
     return()
   }
   
-  if (reticulate::py_module_available("sympy")) {
+  py_ver <- tryCatch({
+    cfg <- reticulate::py_config()
+    base::numeric_version(cfg$version)
+  }, error = function(e) {
+    base::numeric_version("1")
+  })
+  
+  if (py_ver >= "3" && reticulate::py_module_available("sympy")) {
     local_sympy <- reticulate::import("sympy")
     
     if (base::numeric_version(local_sympy$`__version__`) >= "1.4") {
@@ -40,8 +47,9 @@ ensure_sympy <- function() {
   silent_prepare_sympy()
   
   if (is.null(pkg_globals$internal_sympy)) {
-    stop("'SymPy' >= 1.4 not available.\n", 
-         "Please run this command:\n", 
+    stop("Both Python3 and 'SymPy' >= 1.4 must be available.\n", 
+         "Please verify Python version with 'reticulate::py_config()'.\n", 
+         "To install SymPy, please run this command:\n", 
          "caracas::install_sympy()")
   }
 }
