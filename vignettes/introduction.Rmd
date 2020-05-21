@@ -14,100 +14,63 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r}
+```{r, message=FALSE}
 library(caracas)
 ```
 
 ```{r, include = FALSE}
+inline_code <- function(x) {
+  x
+}
+
 if (!have_sympy()) {
   # SymPy not available, so the chunks shall not be evaluated
   knitr::opts_chunk$set(eval = FALSE)
+  
+  inline_code <- inline_code <- function(x) {
+    deparse(substitute(x))
+  }
 }
 ```
 
-## Road-map
-
-Currently only a `SymPy` object is available. 
-More functionality will be added shortly. 
-Please keep an eye out at the development site at <https://github.com/r-cas/caracas>.
-
-## Elaborate example
-
-How can we minimise the amount of material used to produce a cylindric
-tin can that contains 1 litre.  The cylinder has diameter $d$ and
-height $h$. The question is therefore: What is $d$ and $h$?
-
-First we get the `SymPy` object:
+## Quick start
 
 ```{r}
-sympy <- get_sympy()
+x <- symbol('x')
+eq <- 2*x^2 - x
+eq
+as.character(eq)
+as_r(eq)
+tex(eq)
 ```
 
-Then we introduce the variables `d` (diameter) and `h` (height):
+$$`r inline_code(tex(eq))`$$
 
 ```{r}
-d <- sympy$symbols('d')
-h <- sympy$symbols('h')
+solve_sys(eq, x)
+der(eq, x)
+subs(eq, x, "y")
 ```
 
-The problem is a constrained optimisation problem, and we solve it by
-a Lagrange multiplier, and therefore we introduce `lam` (the Lagrange
-multiplier):
+## Linear algebra
 
 ```{r}
-lam <- sympy$symbols('lam')
+A <- matrix(c("x", 2, 0, "2*x"), 2, 2)
+B <- as_symbol(A)
+B
+Binv <- inv(B) # or solve_lin(B)
+Binv
+tex(Binv)
 ```
 
-We now set up the problem:
+$$`r inline_code(tex(Binv))`$$
 
 ```{r}
-area_str <- "Pi/2 * d**2 + Pi * h * d"
-vol_str <- "Pi/4 * d**2 * h"
-lap_str <- paste0("(", area_str, ") - lam*((", vol_str, ") - 1)")
-lap <- sympy$parsing$sympy_parser$parse_expr(
-  lap_str,
-  local_dict = list('d' = d, 'h' = h, 'lam' = lam))
+eigen_val(Binv)
 ```
 
-We can now find the gradient:
 
-```{r}
-grad <- sympy$derive_by_array(lap, list(d, h, lam))
-grad
-```
+## More examples
 
-And find the critical points:
+Please find more examples in the other vignettes.
 
-```{r}
-sol <- sympy$solve(grad, list(d, h, lam), dict = TRUE)
-sol
-```
-
-We take the one with the real solution:
-
-```{r}
-sol[[1]]
-```
-
-We now have a short helper function to help getting appropriate `R`
-expressions (such a function will be included in later versions of
-this package):
-
-```{r}
-to_r <- function(x) {
-  x <- as.character(x)
-  x <- gsub("Pi", "pi", x, fixed = TRUE)
-  x <- gsub("**", "^", x, fixed = TRUE)
-  x <- parse(text = x)
-  return(x)
-}
-
-sol_d <- to_r(sol[[1]]$d)
-sol_d
-eval(sol_d)
-sol_h <- to_r(sol[[1]]$h)
-sol_h
-eval(sol_h)
-```
-
-(It is left as an exercise to the reader to show that the critical point indeed is a minimum.)

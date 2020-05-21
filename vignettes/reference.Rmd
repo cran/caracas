@@ -1,0 +1,370 @@
+---
+title: "Reference"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, message=FALSE}
+library(caracas)
+```
+
+```{r, include = FALSE}
+inline_code <- function(x) {
+  x
+}
+
+if (!have_sympy()) {
+  # SymPy not available, so the chunks shall not be evaluated
+  knitr::opts_chunk$set(eval = FALSE)
+  
+  inline_code <- inline_code <- function(x) {
+    deparse(substitute(x))
+  }
+}
+```
+
+
+## Quick start
+
+```{r}
+x <- symbol('x')
+as.character(x)
+x
+as_r(x)
+```
+
+
+```{r}
+2*x
+y <- symbol('y')
+sqrt(3*x^y)
+```
+
+```{r}
+z <- cos(x)^2 + sin(x)^2
+z
+simplify(z)
+tex(z)
+```
+
+```{r}
+z <- cos(x)*cos(y) - sin(x)*sin(y)
+z
+simplify(z)
+z <- cos(x + y)
+z
+expand(z)
+expand_trig(z)
+```
+
+```{r}
+x <- symbol('x')
+y <- symbol('y')
+z <- log(x*y)
+z
+expand_log(z)
+```
+
+
+### Sums
+
+```{r}
+x <- symbol("x")
+sumf(1/x, "x", 1, 10)
+sumf(1/x, x, 1, 10)
+s <- sumf(1/x, "x", 1, 10)
+as_r(s)
+sum(1/(1:10))
+n <- symbol("n")
+simplify(sumf(x, x, 1, n))
+```
+
+
+### Products
+
+```{r}
+x <- symbol("x")
+p <- prodf(1/x, "x", 1, 10)
+p
+as_r(p)
+prod(1/(1:10))
+n <- symbol("n")
+prodf(x, x, 1, n)
+```
+
+
+### Integrals
+
+```{r}
+x <- symbol("x")
+
+intf(1/x, x, 1, 10)
+i1 <- intf(1/x, x, 1, 10, doit = FALSE)
+i1
+tex(i1)
+doit(i1)
+intf(1/x, x)
+i1 <- intf(1/x, x, doit = FALSE)
+i1
+tex(i1)
+doit(i1)
+```
+
+### Limits
+
+
+```{r}
+x <- symbol("x")
+limf(sin(x)/x, "x", 0)
+limf(1/x, "x", 0, dir = '+')
+limf(1/x, "x", 0, dir = '-')
+```
+
+We can also postpone evaluation:
+
+```{r}
+x <- symbol("x")
+limf(sin(x)/x, "x", 0)
+limf(sin(x)/x, x, 0)
+```
+
+```{r}
+res <- limf(sin(x)/x, "x", 0, doit = FALSE)
+res
+as.character(res)
+tex(res)
+doit(res)
+as_r(res)
+```
+
+### Derivatives
+
+Note that the function is called `d()` and not `deriv()`.
+
+```{r}
+x <- symbol("x")
+y <- symbol("y")
+f <- 3*x^2 + x*y^2
+f
+as_r(f)
+der(f, "x")
+der(f, x)
+der(f, c("x", "y"))
+der(f, c(x, y))
+f1 <- der(f, c(x, y))
+f1
+as.character(f1)
+as_r(f1)
+eval(as_r(f1), list(x = 1, y = 2))
+der(f1, c(x, y))
+f2 <- der2(f, c(x, y))
+f2
+as_r(f2)
+eval(as_r(f2), list(x = 1, y = 2))
+```
+
+
+```{r}
+x <- symbol("x")
+y <- symbol("y")
+f <- eval_to_symbol("[3*x**2 + x*y**2, 2*x, 5*y]")
+f
+der(f, c(x, y))
+```
+
+
+## Linear algebra
+
+```{r}
+A <- matrix(c("x", 0, 0, "2*x"), 2, 2)
+A
+B <- as_symbol(A)
+B
+2*B
+B*B # Component-wise / Hadamard product
+dim(B)
+sqrt(B)
+log(B)
+sum(B)
+B %*% t(B)
+diag(B)
+cbind(B, B)
+rbind(B, B)
+```
+
+```{r}
+determinant(B)
+```
+
+```{r}
+A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
+B <- as_symbol(A)
+eigen_val(B)
+eigen_vec(B)
+eigen(eval(as_r(B), list(a = 2)))
+```
+
+```{r}
+B
+diag(B)
+diag(B) <- "b"
+B
+diag(B)[-2] <- "a"
+B
+```
+
+
+## Solve
+
+* Linear system of equations: `inv()` / `solve_lin()`
+* Non-linear system of equations: `solve_sys()`
+
+Below find an example with maximising the multinomial likelihood.
+
+```{r}
+p <- as_symbol(paste0("p", 1:3))
+y <- as_symbol(paste0("y", 1:3))
+a <- as_symbol("a")
+l <- sum(y*log(p))
+l
+L <- -l + a*(sum(p) - 1)
+L
+tex(L)
+g <- der(L, c(p, a))
+g
+sol <- solve_sys(g, c(p, a))
+sol
+sol[[1L]]$p1
+tex(sol[[1L]]$p1)
+```
+
+## Substitution
+
+```{r}
+x <- symbol('x')
+eq <- 2*x^2 - x
+eq
+subs(eq, x, "y")
+```
+
+```{r}
+p <- as_symbol(paste0("p", 1:3))
+y <- as_symbol(paste0("y", 1:3))
+a <- as_symbol("a")
+l <- sum(y*log(p))
+L <- -l + a*(sum(p) - 1)
+g <- der(L, c(a, p))
+sols <- solve_sys(g, c(a, p))
+sol <- sols[[1L]]
+sol
+H <- der2(L, c(p, a))
+H
+H_sol <- subs_lst(H, sol)
+H_sol
+```
+
+
+## Subsetting
+
+Note that all vectors in `caracas` are column vectors.
+
+```{r}
+A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
+B <- as_symbol(A)
+B[, 2]
+B[, -2]
+B[1, ]
+B[1, , drop = FALSE] # Note this is a 1x3 matrix
+B[, 2] <- "x"
+B
+```
+
+
+## Using `SymPy` directly
+
+```{r}
+sympy <- get_sympy()
+```
+
+```{r}
+sympy$diff("2*a*x", "x")
+sympy$solve("x**2 - 1", "x")
+```
+
+
+## Output
+
+```{r}
+# Multinomial likelihood
+p <- as_symbol(paste0("p", 1:3))
+y <- as_symbol(paste0("y", 1:3))
+a <- as_symbol("a")
+l <- sum(y*log(p))
+L <- -l + a*(sum(p) - 1)
+L
+print(L, ascii = TRUE)
+g <- der(L, c(p, a))
+sol <- solve_sys(g, c(p, a))
+sol
+print(sol, simplify = FALSE)
+```
+
+```{r}
+as.character(g)
+as_character_matrix(g)
+```
+
+
+### Options
+
+The following options are available:
+
+* `caracas.print.prettyascii`
+* `caracas.print.ascii`
+* `caracas.print.rowvec`
+* `caracas.print.sol.simplify`
+
+```{r}
+sol
+L
+options(caracas.print.prettyascii = TRUE) 
+sol
+L
+options(caracas.print.prettyascii = NULL) # reset to default (FALSE)
+```
+
+```{r}
+sol
+L
+options(caracas.print.ascii = TRUE) 
+sol
+L
+options(caracas.print.ascii = NULL) # reset to default (FALSE)
+```
+
+```{r}
+p
+options(caracas.print.rowvec = FALSE)
+p
+options(caracas.print.rowvec = NULL) # reset to default (TRUE)
+```
+
+```{r}
+sol
+options(caracas.print.sol.simplify = FALSE)
+sol
+options(caracas.print.sol.simplify = NULL) # reset to default (TRUE)
+```
+
+
+
