@@ -24,4 +24,20 @@ the roots are found.
 If called as \code{solve_sys(lhs, rhs, vars)}
 the solutions to \code{lhs = rhs} for \code{vars} are found.
 }
+\examples{
+if (has_sympy()) {
+  x <- symbol('x')
+  exp1 <- 2*x + 2
+  exp2 <- x
+  solve_sys(cbind(exp1), cbind(exp2), x)
+  
+  x <- symbol("x")
+  y <- symbol("y")
+  lhs <- cbind(3*x*y - y, x)
+  rhs <- cbind(-5*x, y+4)
+  sol <- solve_sys(lhs, rhs, list(x, y))
+  sol
+}
+
+}
 \concept{solve}

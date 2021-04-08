@@ -16,10 +16,10 @@ A \code{caracas_symbol}
 Create a symbol from a string
 }
 \examples{
-if (have_sympy()) {
+if (has_sympy()) {
    x <- symbol('x')
    (1+1)*x^2
-   limf(sin(x)/x, "x", 0)
+   lim(sin(x)/x, "x", 0)
 }
 
 }

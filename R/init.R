@@ -1,3 +1,4 @@
+
 # devtools::check_win_devel()
 # devtools::check_rhub() (rhub::check_for_cran())
 
@@ -12,7 +13,16 @@
 
 # global reference to sympy
 pkg_globals <- new.env()
+pkg_globals$internal_py <- NULL
 pkg_globals$internal_sympy <- NULL
+pkg_globals$internal_globals_length <- NULL
+
+
+define_printers <- function() {
+  fl <- system.file("define_printers.py", package = "caracas")
+  reticulate::py_run_file(fl)
+}
+
 
 #' @importFrom reticulate import py_run_string py_module_available
 silent_prepare_sympy <- function() {
@@ -33,11 +43,17 @@ silent_prepare_sympy <- function() {
     if (base::numeric_version(local_sympy$`__version__`) >= "1.4") {
       # All okay:
       
+      pkg_globals$internal_py <- reticulate::py # update global reference
       pkg_globals$internal_sympy <- local_sympy # update global reference
       
       reticulate::py_run_string("from sympy import *")
-      #reticulate::py_run_string("from sympy.parsing.sympy_parser import parse_expr")
+      
+      define_printers()
     } 
+    
+    # # Save number of existing symbols to later being able to discard those first n items
+    # glb_syms <- reticulate::py_eval("globals()")
+    # pkg_globals$internal_globals_length <- length(glb_syms)
     
     # else handled in .onAttach()
   }
@@ -49,6 +65,7 @@ ensure_sympy <- function() {
   if (is.null(pkg_globals$internal_sympy)) {
     stop("Both Python3 and 'SymPy' >= 1.4 must be available.\n", 
          "Please verify Python version with 'reticulate::py_config()'.\n", 
+         "Remember to configure reticulate (e.g. 'reticulate::use_condaenv(\"anaconda3\")') before loading caracas.\n",
          "To install SymPy, please run this command:\n", 
          "caracas::install_sympy()")
   }
@@ -59,12 +76,12 @@ ensure_sympy <- function() {
 #' @return `TRUE` if 'SymPy' is available, else `FALSE`
 #' 
 #' @examples 
-#' have_sympy()
+#' has_sympy()
 #' 
 #' @concept sympy
 #' 
 #' @export
-have_sympy <- function() {
+has_sympy <- function() {
   silent_prepare_sympy()
   
   return(!is.null(pkg_globals$internal_sympy))
@@ -75,7 +92,7 @@ have_sympy <- function() {
 #' @return The version of the 'SymPy' available
 #' 
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   sympy_version()
 #' }
 #' 
@@ -91,6 +108,28 @@ sympy_version <- function() {
   return(sympy_version)
 }
 
+#' Access 'py' object
+#' 
+#' Get the 'py' object.  
+#' Note that it gives you extra responsibilities
+#' when you choose to access the 'py' object directly.
+#'
+#' @return The 'py' object with direct access to the library.
+#'
+#' @examples 
+#' if (has_sympy()) {
+#'   py <- get_py()
+#' }
+#' 
+#' @concept sympy
+#' 
+#' @export
+get_py <- function() {
+  ensure_sympy()
+  
+  return(pkg_globals$internal_py)
+}
+
 #' Access 'SymPy' directly
 #' 
 #' Get the 'SymPy' object.  
@@ -100,7 +139,7 @@ sympy_version <- function() {
 #' @return The 'SymPy' object with direct access to the library.
 #'
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   sympy <- get_sympy()
 #'   sympy$solve("x**2-1", "x")
 #' }
@@ -141,3 +180,5 @@ install_sympy <- function(method = "auto", conda = "auto") {
           "with this R command:\nreticulate::miniconda_update()")
   return(invisible(NULL))
 }
+
+

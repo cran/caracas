@@ -10,6 +10,18 @@ test_that("as.character / tex", {
   expect_equal(tex(z), "\\sin^{2}{\\left(x \\right)} + \\cos^{2}{\\left(x \\right)}")
 })
 
+# test_that("tex exp", {
+#   skip_if_no_sympy()
+#   
+#   # FIXME: Issue 36: https://github.com/r-cas/caracas/issues/36
+#   # n <- symbol("n")
+#   # f <- (1 + 1/n)^n
+#   # lim_f <- lim(f, n, Inf)
+#   # tex(lim_f)
+#   # get_py()$print_caracas_latex(lim_f$pyobj)
+#   
+# })
+
 test_that("print", {
   skip_if_no_sympy()
   
@@ -44,7 +56,7 @@ test_that("print solve_sys:", {
   y <- symbol("y")
   lhs <- cbind(3*x*y - y, x)
   rhs <- cbind(-5*x, y+4)
-  sol <- solve_sys(lhs, rhs, c(x, y))
+  sol <- solve_sys(lhs, rhs, list(x, y))
   
   out <- paste0(capture.output(print(sol)), collapse = "")
   expect_match(out, "Solution")
@@ -116,7 +128,44 @@ test_that("print prettyascii", {
 test_that("print vector", {
   skip_if_no_sympy()
   
-  B <- as_symbol(1:3)
+  B <- as_sym(1:3)
   expect_true(grepl("^\\[caracas\\]: \\[1  2  3\\].+$", 
                     capture.output(print(B)))) # .{1} == transpose 
+})
+
+
+test_that("custom printer: exp", {
+  skip_if_no_sympy()
+  
+  n <- symbol('n')
+  
+  expect_output(print(exp(2*n), prettyascii = FALSE, ascii = FALSE), "exp(2⋅n)", fixed = TRUE)
+  expect_output(print(exp(2*n), prettyascii = TRUE, ascii = FALSE), "exp(2*n)", fixed = TRUE)
+  expect_output(print(exp(2*n), prettyascii = FALSE, ascii = TRUE), "exp(2*n)", fixed = TRUE)
+  
+  
+  f <- (1 + 1/n)^n
+  lim_f <- lim(f, n, Inf)
+  
+  expect_output(print(lim_f, prettyascii = FALSE, ascii = FALSE), "exp(1)", fixed = TRUE)
+  expect_output(print(lim_f, prettyascii = TRUE, ascii = FALSE), "exp(1)", fixed = TRUE)
+  expect_output(print(lim_f, prettyascii = FALSE, ascii = TRUE), "exp(1)", fixed = TRUE)
+  
+  
+  lim_f_sym <- lim(f, n, Inf, doit = FALSE)
+  
+  outstr <- function(x) {
+    paste0(capture.output(x), collapse = "")
+  }
+  
+  o1 <- outstr(print(lim_f_sym, prettyascii = FALSE, ascii = FALSE))
+  o2 <- outstr(print(lim_f_sym, prettyascii = TRUE, ascii = FALSE))
+  o3 <- outstr(print(lim_f_sym, prettyascii = FALSE, ascii = TRUE))
+  
+  expect_equal(o3, "[caracas]: Limit((1 + 1/n)^n, n, Inf, dir='-')")
+  expect_equal(o2, "[caracas]:             n                /    1\\             lim |1 + -|            n->oo\\    n/")
+  
+  # Windows due to UTF-8:
+  skip_on_os("windows")
+  expect_equal(o1, "[caracas]:            n               ⎛    1⎞            lim ⎜1 + ─⎟            n─→∞⎝    n⎠")
 })

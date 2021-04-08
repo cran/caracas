@@ -26,15 +26,19 @@ get_caracas_out <- function(x,
     stop("Unexpected")
   }
   
+  py <- get_py()
+  
   suffix <- ""
   
   out <- if (!is.null(prettyascii) && as.logical(prettyascii) == TRUE) {
     # 'prettyascii'
     if (rowvec && symbol_is_matrix(x) && ncol(x) == 1L && nrow(x) > 1L) {
       suffix <- intToUtf8(7488L) # T utf-8
-      reticulate::py_capture_output(get_sympy()$pprint(t(x)$pyobj, use_unicode = FALSE))
+      #reticulate::py_capture_output(get_sympy()$pprint(t(x)$pyobj, use_unicode = FALSE))
+      reticulate::py_capture_output(py$print_caracas(t(x)$pyobj))
     } else {
-      reticulate::py_capture_output(get_sympy()$pprint(x$pyobj, use_unicode = FALSE))
+      #reticulate::py_capture_output(get_sympy()$pprint(x$pyobj, use_unicode = FALSE))
+      reticulate::py_capture_output(py$print_caracas(x$pyobj))
     }
   } else if (!is.null(ascii) && as.logical(ascii) == TRUE) {
     # 'ascii'
@@ -43,9 +47,11 @@ get_caracas_out <- function(x,
     # 'utf8'
     if (rowvec && symbol_is_matrix(x) && ncol(x) == 1L && nrow(x) > 1L) {
       suffix <- intToUtf8(7488L) # T utf-8
-      reticulate::py_capture_output(get_sympy()$pprint(t(x)$pyobj))
+      #reticulate::py_capture_output(get_sympy()$pprint(t(x)$pyobj))
+      reticulate::py_capture_output(py$print_caracas_unicode(t(x)$pyobj))
     } else {
-      reticulate::py_capture_output(get_sympy()$pprint(x$pyobj))
+      #reticulate::py_capture_output(get_sympy()$pprint(x$pyobj))
+      reticulate::py_capture_output(py$print_caracas_unicode(x$pyobj))
     }
   }
   
@@ -108,6 +114,10 @@ print.caracas_solve_sys_sol <- function(x,
   ensure_sympy()
   
   if (simplify) {
+    if (length(x) == 0L) {
+      cat("No solutions\n")
+    }
+    
     for (i in seq_along(x)) {
       cat("Solution ", i, ":\n", sep = "")
       #print(i)
@@ -161,8 +171,13 @@ tex.caracas_symbol <- function(x) {
   ensure_sympy()
   
   if (!is.null(x$pyobj)) {
-    return(get_sympy()$latex(x$pyobj))
+     return(get_sympy()$latex(x$pyobj))
   }
+  # if (!is.null(x$pyobj)) {
+  #   py <- get_py()
+  #   o <- reticulate::py_capture_output(py$print_caracas_latex(x$pyobj))
+  #   return(o)
+  # }
   
   stop("Unexpected")
 }
@@ -170,13 +185,14 @@ tex.caracas_symbol <- function(x) {
 #' Convert symbol to character
 #'
 #' @param x A `caracas_symbol`
+#' @param replace_I Replace constant I (can both be identity and imaginary unit)
 #' @param \dots not used
 #'
 #' @concept output
 #'
 #' @export
-as.character.caracas_symbol <- function(x, ...) {
+as.character.caracas_symbol <- function(x, replace_I = TRUE, ...) {
   y <- as.character(x$pyobj)
-  y <- python_strings_to_r(y)
+  y <- python_strings_to_r(y, replace_I = replace_I)
   return(y)
 }

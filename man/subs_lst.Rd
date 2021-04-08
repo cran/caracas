@@ -15,10 +15,10 @@ subs_lst(s, x)
 Useful for substituting solutions into expressions.
 }
 \examples{
-if (have_sympy()) {
-     p <- as_symbol(paste0("p", 1:3))
-     y <- as_symbol(paste0("y", 1:3))
-     a <- as_symbol("a")
+if (has_sympy()) {
+     p <- as_sym(paste0("p", 1:3))
+     y <- as_sym(paste0("y", 1:3))
+     a <- as_sym("a")
      l <- sum(y*log(p))
      L <- -l + a*(sum(p) - 1)
      g <- der(L, c(a, p))
@@ -32,3 +32,7 @@ if (have_sympy()) {
 }
 
 }
+\seealso{
+\code{\link[=subs]{subs()}}, \code{\link[=subs_vec]{subs_vec()}}
+}
+\concept{caracas_symbol}

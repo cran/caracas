@@ -15,9 +15,10 @@ bound_to_str <- function(b) {
     }
   }
   
-  bnd <- deparse(eval(substitute(substitute(b)), parent.frame()))
+  bnd <- as.character(b)
+  #bnd <- deparse(eval(substitute(substitute(b)), parent.frame()))
   #bnd <- gsub("pi", "Pi", bnd, fixed = TRUE)
-  
+
   return(bnd)
 }
 
@@ -37,17 +38,17 @@ calc_verify_func <- function(f) {
 #' @param doit Evaluate the limit immediately (or later with [doit()])
 #'
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   x <- symbol("x")
-#'   limf(sin(x)/x, "x", 0)
-#'   limf(1/x, "x", 0, dir = '+')
-#'   limf(1/x, "x", 0, dir = '-')
+#'   lim(sin(x)/x, "x", 0)
+#'   lim(1/x, "x", 0, dir = '+')
+#'   lim(1/x, "x", 0, dir = '-')
 #' }
 #' 
 #' @concept calculus
 #' 
 #' @export
-limf <- function(f, var, val, dir = NULL, doit = TRUE) {
+lim <- function(f, var, val, dir = NULL, doit = TRUE) {
   calc_verify_func(f)
   ensure_sympy()
   var <- as.character(var)
@@ -87,19 +88,19 @@ limf <- function(f, var, val, dir = NULL, doit = TRUE) {
 #' @param doit Evaluate the sum immediately (or later with [doit()])
 #'
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   x <- symbol("x")
-#'   s <- sumf(1/x, "x", 1, 10)
-#'   as_r(s)
+#'   s <- sum_(1/x, "x", 1, 10)
+#'   as_expr(s)
 #'   sum(1/(1:10))
 #'   n <- symbol("n")
-#'   simplify(sumf(x, x, 1, n))
+#'   simplify(sum_(x, x, 1, n))
 #' }
 #' 
 #' @concept calculus
 #' 
 #' @export
-sumf <- function(f, var, lower, upper, doit = TRUE) {
+sum_ <- function(f, var, lower, upper, doit = TRUE) {
   calc_verify_func(f)
   ensure_sympy()
   var <- as.character(var)
@@ -128,20 +129,20 @@ sumf <- function(f, var, lower, upper, doit = TRUE) {
 #' @param doit Evaluate the product immediately (or later with [doit()])
 #'
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   x <- symbol("x")
-#'   p <- prodf(1/x, "x", 1, 10)
+#'   p <- prod_(1/x, "x", 1, 10)
 #'   p
-#'   as_r(p)
+#'   as_expr(p)
 #'   prod(1/(1:10))
 #'   n <- symbol("n")
-#'   prodf(x, x, 1, n)
+#'   prod_(x, x, 1, n)
 #' }
 #' 
 #' @concept calculus
 #' 
 #' @export
-prodf <- function(f, var, lower, upper, doit = TRUE) {
+prod_ <- function(f, var, lower, upper, doit = TRUE) {
   calc_verify_func(f)
   ensure_sympy()
   var <- as.character(var)
@@ -175,19 +176,21 @@ prodf <- function(f, var, lower, upper, doit = TRUE) {
 #' @param doit Evaluate the integral immediately (or later with [doit()])
 #'
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   x <- symbol("x")
 #'   
-#'   intf(1/x, x, 1, 10)
-#'   intf(1/x, x, 1, 10, doit = FALSE)
-#'   intf(1/x, x)
-#'   intf(1/x, x, doit = FALSE)
+#'   int(1/x, x, 1, 10)
+#'   int(1/x, x, 1, 10, doit = FALSE)
+#'   int(1/x, x)
+#'   int(1/x, x, doit = FALSE)
+#'   int(exp(-x^2/2), x, -Inf, Inf)
+#'   int(exp(-x^2/2), x, -Inf, Inf, doit = FALSE)
 #' }
 #' 
 #' @concept calculus
 #' 
 #' @export
-intf <- function(f, var, lower, upper, doit = TRUE) {
+int <- function(f, var, lower, upper, doit = TRUE) {
   calc_verify_func(f)
   ensure_sympy()
   var <- as.character(var)
@@ -293,23 +296,50 @@ vars_to_array <- function(vars) {
 #'
 #' @param expr A `caracas_symbol`
 #' @param vars variables to take derivate with respect to
+#' @param simplify Simplify result
 #'
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   x <- symbol("x")
 #'   y <- symbol("y")
 #'   f <- 3*x^2 + x*y^2
 #'   der(f, x)
+#'   g <- der(f, list(x, y))
+#'   g
+#'   dim(g)
+#'   G <- matrify(g)
+#'   G
+#'   dim(G)
+#'   
+#'   h <- der(g, list(x, y))
+#'   h
+#'   dim(h)
+#'   as.character(h)
+#'   H <- matrify(h)
+#'   H
+#'   dim(H)
+#'   
+#'   g %>% 
+#'     der(list(x, y)) %>% 
+#'     der(list(x, y)) %>% 
+#'     der(list(x, y))
 #' }
 #' 
 #' @concept calculus
 #'
 #' @export
-der <- function(expr, vars) {
+der <- function(expr, vars, simplify = TRUE) {
   ensure_sympy()
   
   new_vars <- vars_to_array(vars)
   d <- der_worker(expr, new_vars)
+  
+  if (simplify) {
+    if (grepl("^\\[\\[\\[", as.character(d))) {
+      d <- unbracket(d)
+      d <- matrify(d)
+    }
+  }
   
   return(d)
 }
@@ -318,24 +348,86 @@ der <- function(expr, vars) {
 #'
 #' @param expr A `caracas_symbol`
 #' @param vars variables to take derivate with respect to
+#' @param simplify Simplify result
 #' 
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   x <- symbol("x")
 #'   y <- symbol("y")
 #'   f <- 3*x^2 + x*y^2
 #'   der2(f, x)
+#'   h <- der2(f, list(x, y))
+#'   h
+#'   dim(h)
+#'   H <- matrify(h)
+#'   H
+#'   dim(H)
 #' }
 #' 
 #' @concept calculus
 #'
 #' @export
-der2 <- function(expr, vars) {
+der2 <- function(expr, vars, simplify = TRUE) {
   ensure_sympy()
   
-  d1 <- der(expr, vars)
-  d2 <- der(d1, vars)
+  d1 <- der(expr, vars, simplify = simplify)
+  d2 <- der(d1, vars, simplify = simplify)
   
   return(d2)
+}
+
+
+#' Remove remainder term
+#' 
+#' @param x Expression to remove remainder term from
+#' 
+#' @examples 
+#' if (has_sympy()) {
+#'   def_sym(x)
+#'   f <- cos(x)
+#'   ft_with_O <- taylor(f, x0 = 0, n = 4+1)
+#'   ft_with_O
+#'   ft_with_O %>% drop_remainder() %>% as_expr()
+#' }
+#' 
+#' @seealso [taylor()]
+#' 
+#' @concept calculus
+#'
+#' @export
+drop_remainder <- function(x) {
+  ensure_sympy()
+  
+  ft <- x %>% sympy_func("removeO")
+  
+  return(ft)
+}
+
+#' Taylor expansion
+#' 
+#' @param f Function to be expanded
+#' @param x0 Point to expand around
+#' @param n Order of remainder term
+#' 
+#' @examples 
+#' if (has_sympy()) {
+#'   def_sym(x)
+#'   f <- cos(x)
+#'   ft_with_O <- taylor(f, x0 = 0, n = 4+1)
+#'   ft_with_O
+#'   ft_with_O %>% drop_remainder() %>% as_expr()
+#' }
+#' 
+#' @seealso [drop_remainder()]
+#' 
+#' @concept calculus
+#'
+#' @export
+taylor <- function(f, x0 = 0, n = 6) {
+  ensure_sympy()
+  
+  ft <- f %>% sympy_func("series", x0 = x0, n = n)
+  
+  return(ft)
 }
 

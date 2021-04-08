@@ -16,6 +16,14 @@ status](https://github.com/r-cas/caracas/workflows/R-CMD-check/badge.svg)](https
 
     install.packages('caracas')
 
+Please ensure that you have SymPy installed, or else install it:
+
+``` r
+if (!caracas::has_sympy()) {
+  caracas::install_sympy() 
+}
+```
+
 To build and install from Github with vignettes run this command from
 within `R` (please install `remotes` first if not already installed):
 
@@ -25,6 +33,17 @@ within `R` (please install `remotes` first if not already installed):
 You can also install the package without vignettes if needed as follows:
 
     remotes::install_github("r-cas/caracas")
+
+## Configuring the Python environment
+
+The `caracas` package uses the
+[`reticulate`](https://github.com/rstudio/reticulate) package (to run
+Python code). Thus, if you wish to configure your Python environment,
+you need to 1) load `reticulate`, 2) configure the Python environment,
+and 3) load `caracas`. The Python environment can be configured as
+described
+[here](https://rstudio.github.io/reticulate/articles/versions.html).
+Again, this need to be done *before* loading `caracas`.
 
 ## Development site
 
@@ -60,7 +79,7 @@ eq
 #>            2⋅x  - x
 as.character(eq)
 #> [1] "2*x^2 - x"
-as_r(eq)
+as_expr(eq)
 #> expression(2 * x^2 - x)
 tex(eq)
 #> [1] "2 x^{2} - x"
@@ -81,7 +100,7 @@ subs(eq, x, "y")
 
 ``` r
 A <- matrix(c("x", 2, 0, "2*x"), 2, 2)
-B <- as_symbol(A)
+B <- as_sym(A)
 B
 #> [caracas]: ⎡x   0 ⎤
 #>            ⎢      ⎥
@@ -101,7 +120,7 @@ tex(Binv)
 ```
 
 ``` r
-eigen_val(Binv)
+eigenval(Binv)
 #> [[1]]
 #> [[1]]$eigval
 #> [caracas]: 1

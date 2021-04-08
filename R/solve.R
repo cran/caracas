@@ -8,23 +8,6 @@ sol_to_r_symbol_list <- function(x) {
   return(sols)
 }
 
-#' Find inverse of matrix
-#' 
-#' @param A matrix
-#' 
-#' @concept solve
-#' 
-#' @export
-inv <- function(A) {
-  ensure_sympy()
-  
-  if (!symbol_is_matrix(A)) {
-    stop("'A' must be a matrix")
-  }
-  
-  Ainv <- A$pyobj$inv()
-  return(construct_symbol_from_pyobj(Ainv))
-}
 
 #' Solve a linear system of equations
 #' 
@@ -52,8 +35,16 @@ solve_lin <- function(A, b) {
 
 rootsolve <- function(lhs, vars) {
   if (!is.null(dim(lhs))) {
+    if (nrow(lhs) != 1L && ncol(lhs) == 1L) {
+      lhs <- t(lhs)
+    }
+    
     if (nrow(lhs) != 1L) {
       stop("Only 1 row in LHS allowed (multiple columns are allowed)")
+    }
+    
+    if (length(vars) == 1L && !is.null(dim(vars))) {
+      vars <- listify(vars)
     }
     
     if (length(vars) != ncol(lhs)) {
@@ -63,7 +54,8 @@ rootsolve <- function(lhs, vars) {
   
   # Single variable
   if (inherits(vars, "caracas_symbol")) {
-    vars <- as.character(vars)
+    #vars <- as.character(vars)
+    vars <- vars$pyobj
   } else {
     # Multiple variables
     vars <- unlist(lapply(vars, function(x) {
@@ -101,6 +93,21 @@ rootsolve <- function(lhs, vars) {
 #' @param lhs Equation (or equations as row vector/1xn matrix)
 #' @param rhs Equation (or equations as row vector/1xn matrix)
 #' @param vars vector of variable names or symbols
+#' 
+#' @examples 
+#' if (has_sympy()) {
+#'   x <- symbol('x')
+#'   exp1 <- 2*x + 2
+#'   exp2 <- x
+#'   solve_sys(cbind(exp1), cbind(exp2), x)
+#'   
+#'   x <- symbol("x")
+#'   y <- symbol("y")
+#'   lhs <- cbind(3*x*y - y, x)
+#'   rhs <- cbind(-5*x, y+4)
+#'   sol <- solve_sys(lhs, rhs, list(x, y))
+#'   sol
+#' }
 #' 
 #' @return A list with solutions (with class `caracas_solve_sys_sol` 
 #' for compact printing), each element containing a named 

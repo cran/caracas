@@ -12,11 +12,11 @@ inline_code <- function(x) {
   x
 }
 
-if (!have_sympy()) {
+if (!has_sympy()) {
   # SymPy not available, so the chunks shall not be evaluated
   knitr::opts_chunk$set(eval = FALSE)
   
-  inline_code <- inline_code <- function(x) {
+  inline_code <- function(x) {
     deparse(substitute(x))
   }
 }

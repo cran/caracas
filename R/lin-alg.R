@@ -1,4 +1,36 @@
+stopifnot_matrix <- function(x){
+  # MatrixSymbol
+  try({
+    res <- x$pyobj$is_MatrixExpr
+    
+    if (is.logical(res) && isTRUE(res)) {
+      return(invisible(NULL))
+    }
+    
+    if (reticulate::py_to_r(res)) {
+      return(invisible(NULL))
+    }
+  }, silent = TRUE)
+  
+  if (!symbol_is_matrix(x)) {
+      stop("'x' must be a matrix")
+  }
+}
+
 symbol_is_matrix <- function(x) {
+  # MatrixSymbol
+  try({
+    res <- x$pyobj$is_MatrixExpr
+    
+    if (is.logical(res) && isTRUE(res)) {
+      return(TRUE)
+    }
+    
+    if (reticulate::py_to_r(res)) {
+      return(TRUE)
+    }
+  }, silent = TRUE)
+  
   xstr <- as.character(x)
   
   if (grepl("^Matrix\\(\\[", xstr)) {
@@ -13,13 +45,14 @@ symbol_is_matrix <- function(x) {
   return(FALSE)
 }
 
-symbol_is_list_of_lists_matrix <- function(x) {
-  if (grepl("^\\[\\[", as.character(x))) {
-    return(TRUE)
-  } 
-  
-  return(FALSE)
-}
+# Still needed?
+#symbol_is_list_of_lists_matrix <- function(x) {
+#   if (grepl("^\\[\\[", as.character(x))) {
+#     return(TRUE)
+#   } 
+#   
+#   return(FALSE)
+# }
 
 # symbol_is_vector <- function(x) {
 #   xstr <- as.character(x)
@@ -34,6 +67,7 @@ symbol_is_list_of_lists_matrix <- function(x) {
 scalar_to_matrix <- function(scalar, dims) {
   matrix(rep(scalar, prod(dims)), nrow = dims[1L], ncol = dims[2L])
 }
+
 
 # ensure_symbol_is_matrix <- function(x) {
 #   if (!inherits(x, "caracas_symbol")) {
@@ -53,6 +87,11 @@ number_rows <- function(x) {
     rows <- reticulate::py_to_r(rows)
   }
   
+  if (inherits(rows, "sympy.core.numbers.Integer")) {
+    # FIXME: For MatrixSymbols; avoid as.character()?
+    rows <- as.integer(as.character(rows))
+  }
+  
   return(rows)
 }
 
@@ -64,6 +103,11 @@ number_cols <- function(x) {
     cols <- reticulate::py_to_r(cols)
   }
   
+  if (inherits(cols, "sympy.core.numbers.Integer")) {
+    # FIXME: For MatrixSymbols; avoid as.character()?
+    cols <- as.integer(as.character(cols))
+  }
+  
   return(cols)
 }
 
@@ -72,10 +116,16 @@ number_cols <- function(x) {
 #' @param x caracas symbol
 #' 
 #' @concept linalg
+#' @examples
+#' if (has_sympy()) {
+#'   s  <- as_sym("[[r1, r2, r3], [u1, u2, u3]]")
+#'   s2 <- apply(as_character_matrix(s), 2, function(x) (paste("1/(", x, ")")))
+#'   as_sym(s2)
+#' }
 #' 
 #' @export
 as_character_matrix <- function(x) {
-  y <- as_r_worker(x, as_character = TRUE)
+  y <- as_expr_worker(x, as_character = TRUE)
   return(eval(parse(text = y)))
 }
 
@@ -89,125 +139,18 @@ as_character_matrix <- function(x) {
 #' @export
 dim.caracas_symbol <- function(x) {
   ensure_sympy()
+  stopifnot_symbol(x)
   
-  if (!inherits(x, "caracas_symbol")) {
-    stop(paste0("'x' ", TXT_NOT_CARACAS_SYMBOL))
+  if (!symbol_is_matrix(x)) { 
+    return(NULL) 
   }
-  
-  if (!symbol_is_matrix(x)) {
-    return(NULL)
-  }
-  
+
   rows <- number_rows(x$pyobj)
   cols <- number_cols(x$pyobj)
-  
+
   return(c(rows, cols))
 }
 
-#' Eigenvalues
-#' 
-#' @param x Matrix to find eigenvalues for
-#' 
-#' @examples 
-#' if (have_sympy()) {
-#'   A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
-#'   B <- as_symbol(A)
-#'   eigen_val(B)
-#'   eigen_vec(B)
-#'   eigen(eval(as_r(B), list(a = 2)))
-#' }
-#' 
-#' @concept linalg
-#' 
-#' @importFrom reticulate py_to_r
-#' @export
-eigen_val <- function(x) {
-  ensure_sympy()
-  
-  if (!inherits(x, "caracas_symbol")) {
-    stop(paste0("'x' ", TXT_NOT_CARACAS_SYMBOL))
-  }
-  
-  if (symbol_is_list_of_lists_matrix(x)) {
-    x <- as_symbol(as_character_matrix(x), 
-                   declare_variables = FALSE)
-  }
-  
-  if (!symbol_is_matrix(x)) {
-    return(NULL)
-  }
-  
-  vals <- x$pyobj$eigenvals()
-  stopifnot(inherits(vals, "python.builtin.dict"))
-  
-  vals_lst <- reticulate::py_to_r(vals)
-  
-  eig_info <- vector("list", length(vals_lst))
-  
-  for (i in seq_along(vals_lst)) {
-    eig_info[[i]] <- list(
-      eigval = as_symbol(names(vals_lst)[i]),
-      eigmult = as.integer(vals_lst[i])
-    )
-  }
-  
-  return(eig_info)
-}
-
-#' Eigenvectors and eigenvalues
-#' 
-#' @param x Matrix to find eigenvectors and eigenvalues for
-#' 
-#' @examples 
-#' if (have_sympy()) {
-#'   A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
-#'   B <- as_symbol(A)
-#'   eigen_val(B)
-#'   eigen_vec(B)
-#'   eigen(eval(as_r(B), list(a = 2)))
-#' }
-#' 
-#' @concept linalg
-#' 
-#' @importFrom reticulate py_to_r
-#' @export
-eigen_vec <- function(x) {
-  ensure_sympy()
-  
-  if (!inherits(x, "caracas_symbol")) {
-    stop(paste0("'x' ", TXT_NOT_CARACAS_SYMBOL))
-  }
-  
-  if (symbol_is_list_of_lists_matrix(x)) {
-    x <- as_symbol(as_character_matrix(x), 
-                   declare_variables = FALSE)
-  }
-  
-  if (!symbol_is_matrix(x)) {
-    return(NULL)
-  }
-  
-  vals <- x$pyobj$eigenvects()
-  stopifnot(inherits(vals, "python.builtin.list"))
-  
-  vals_lst <- reticulate::py_to_r(vals)
-  
-  eig_info <- vector("list", length(vals_lst))
-  
-  for (i in seq_along(vals_lst)) {
-    eigvalvec <- vals_lst[[i]]
-    
-    res <- list(
-      eigval = construct_symbol_from_pyobj(eigvalvec[[1L]]),
-      eigmult = as.integer(eigvalvec[[2L]]),
-      eigvec = construct_symbol_from_pyobj(eigvalvec[[3L]][[1L]])
-    )
-    
-    eig_info[[i]] <- res
-  }
-
-  return(eig_info)
-}
 
 
 #' Transpose of matrix
@@ -219,39 +162,50 @@ eigen_vec <- function(x) {
 #' @export
 t.caracas_symbol <- function(x) {
   ensure_sympy()
-  
-  if (!symbol_is_matrix(x)) {
-    stop("'x' must be a matrix")
-  }
+  stopifnot_symbol(x)
+  stopifnot_matrix(x)
   
   xT <- x$pyobj$T
+  
   return(construct_symbol_from_pyobj(xT))
 }
 
-#' Calculate the Determinant of a Matrix
-#' 
-#' Note that there is no argument for `logarithm` as with the generic
-#' method.
+
+#' Elementwise reciprocal matrix
 #'
-#' @param x A `caracas_symbol`
-#' @param \dots Not used
+#' @param x Object `x`
+#' @param numerator The numerator in the result.
 #'
 #' @concept linalg
+#' 
+#' @examples
+#' if (has_sympy()) {
+#'   s <- as_sym("[[r1, r2, r3], [u1, u2, u3]]")
+#'   reciprocal_matrix(s, numerator = 7)
+#' }
+#' 
 #' @export
-determinant.caracas_symbol <- function(x, ...) {
+reciprocal_matrix <- function(x, numerator = 1){
   ensure_sympy()
-  
+
   if (!symbol_is_matrix(x)) {
-    stop("'x' must be a matrix")
+    stop("'x' must be sympy matrix\n")
   }
   
-  xdet <- x$pyobj$det()
+  numerator <- as.character(numerator)
   
-  return(construct_symbol_from_pyobj(xdet))
+  if (grepl("^-?[0-9]+$", numerator)) {
+    # S(): Sympify
+    # Means that this will be e.g. (S(1))/(1) = 1 instead of 1/1 = 1.0 (numeric)
+    numerator <- paste0("S(", numerator, ")")
+  }
+
+  rx <- apply(as_character_matrix(x), 2, function(xx) {
+    paste0("(", numerator, ")", "/(", xx, ")")
+  })
+  
+  return(as_sym(rx))
 }
-
-
-
 
 
 
@@ -272,6 +226,7 @@ diag.default <- function(x, ...) {
   return(base::diag(x, ...))
 }
 
+
 #' Matrix diagonal
 #' 
 #' @param x Object `x`
@@ -282,14 +237,8 @@ diag.default <- function(x, ...) {
 #' @export
 diag.caracas_symbol <- function(x, ...) {
   ensure_sympy()
-  
-  if (!inherits(x, "caracas_symbol")) {
-    stop(paste0("'x' ", TXT_NOT_CARACAS_SYMBOL))
-  }
-  
-  if (!symbol_is_matrix(x)) {
-    stop(paste0("'x' is not a matrix"))
-  }
+  stopifnot_symbol(x)
+  stopifnot_matrix(x)  
   
   y <- eval_to_symbol(x$pyobj$diagonal())
   
@@ -301,6 +250,8 @@ diag.caracas_symbol <- function(x, ...) {
 #'
 #' @param x Object `x`
 #' @param value Replacement value
+#' 
+#' @name diag-set
 #' 
 #' @concept linalg
 #' 
@@ -320,9 +271,9 @@ diag.caracas_symbol <- function(x, ...) {
 #' @param value Replacement value
 #' 
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
-#'   B <- as_symbol(A)
+#'   B <- as_sym(A)
 #'   B
 #'   diag(B)
 #'   diag(B) <- "b"
@@ -335,14 +286,8 @@ diag.caracas_symbol <- function(x, ...) {
 #' @export
 `diag<-.caracas_symbol` <- function(x, value) {
   ensure_sympy()
-  
-  if (!inherits(x, "caracas_symbol")) {
-    stop(paste0("'x' ", TXT_NOT_CARACAS_SYMBOL))
-  }
-  
-  if (!symbol_is_matrix(x)) {
-    stop("'x' must be a matrix")
-  }
+  stopifnot_symbol(x)
+  stopifnot_matrix(x)
   
   xmat <- convert_to_r_mat(x)
   
@@ -352,6 +297,128 @@ diag.caracas_symbol <- function(x, ...) {
   
   diag(xmat) <- value
   
-  y <- as_symbol(xmat)
+  y <- as_sym(xmat)
+  return(y)
+}
+
+#' Construct diagonal matrix from vector
+#' 
+#' @param x Matrix with 1 row or 1 column that is the 
+#' diagonal in a new diagonal matrix
+#' 
+#' @examples 
+#' if (has_sympy()) {
+#'   d <- as_sym(c("a", "b", "c"))
+#'   D <- as_diag(d)
+#'   D
+#' }
+#' 
+#' @concept linalg
+#' 
+#' @export
+as_diag <- function(x) {
+  ensure_sympy()
+  stopifnot_symbol(x)
+  stopifnot_matrix(x)
+  
+  if (!(nrow(x) == 1L || ncol(x) == 1L)) {
+    stop("Either supply a row vector or a column vector with at least one element")
+  }
+  
+  if (nrow(x) > 1L) {
+    x <- t(x)
+  }
+  
+  n <- ncol(x)
+  
+  D <- as_sym(diag(n))
+  
+  for (i in seq_len(n)) {
+    D[i, i] <- as.character(x[1L, i])
+  }
+  
+  return(D)
+}
+
+
+#' Stacks matrix to vector
+#' 
+#' @param x Matrix
+#' 
+#' @examples 
+#' if (has_sympy()) {
+#'   A <- as_sym(matrix(1:9, 3))
+#'   vec(A)
+#' }
+#' 
+#' @concept linalg
+#' 
+#' @export
+vec <- function(x) {
+  ensure_sympy()
+  stopifnot_symbol(x)
+  stopifnot_matrix(x)
+  
+  stopifnot(length(dim(x)) == 2)
+  x2 <- do.call(rbind, lapply(seq_len(ncol(x)), function(j) x[, j]))
+  
+  return(x2)
+}
+
+
+
+#' Symbolic diagonal matrix
+#'
+#' @param x Character vector with diagonal
+#' @param n Number of times `x` should be repeated
+#' @param declare_symbols Passed on to `as_sym()` when constructing symbolic matrix
+#' @param \dots Passed on to `rep(x, n, ...)`
+#'
+#' @concept linalg
+#' 
+#' @examples
+#' if (has_sympy()) {
+#'   diag_(c("a", "b", "c"))
+#'   diag_("a", 2)
+#' }
+#' 
+#' @export
+diag_ <- function(x, n = 1L, declare_symbols = TRUE, ...){
+  ensure_sympy()
+  
+  if (!is.character(x)) {
+    stop("'x' must be a character")
+  }
+  
+  x <- rep(x, n, ...)
+  n <- length(x)
+  
+  A <- matrix("0", nrow = n, ncol = n)
+  diag(A) <- x
+  y <- as_sym(A, declare_symbols = declare_symbols)
+  
+  return(y)
+}
+
+#' Symbolic matrix
+#'
+#' @param \dots Passed on to [matrix()]
+#' @param declare_symbols Passed on to `as_sym()` when constructing symbolic matrix
+#'
+#' @concept linalg
+#' 
+#' @examples
+#' if (has_sympy()) {
+#'   matrix_(1:9, nrow = 3)
+#'   matrix_("a", 2, 2)
+#' }
+#' 
+#' @export
+matrix_ <- function(..., declare_symbols = TRUE){
+  ensure_sympy()
+  
+  A <- matrix(...)
+  y <- as_sym(A, declare_symbols = declare_symbols)
+  
   return(y)
 }

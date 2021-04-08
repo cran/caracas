@@ -5,8 +5,8 @@
 test_that("inv/solve_lin", {
   skip_if_no_sympy()
   
-  A <- as_symbol(matrix(c(1, "x", 0, 2, -1, 3, 4, 2, 5), nrow = 3, ncol = 3))
-  b <- as_symbol(c(4, 1, 7))
+  A <- as_sym(matrix(c(1, "x", 0, 2, -1, 3, 4, 2, 5), nrow = 3, ncol = 3))
+  b <- as_sym(c(4, 1, 7))
   x <- A %*% b
   
   # -------------------------
@@ -36,7 +36,7 @@ test_that("solve_sys(lhs, vars)", {
   # Single variable
   ###################################################################
   #------------------------------------------------------------------
-  sol1 <- solve_sys(as_symbol("x**2 + 1"), "x")
+  sol1 <- solve_sys(as_sym("x**2 + 1"), "x")
   
   expect_equal(length(sol1), 2L)
   expect_equal(unname(unlist(lapply(sol1, lapply, as.character))), 
@@ -49,7 +49,7 @@ test_that("solve_sys(lhs, vars)", {
   
   #------------------------------------------------------------------
   x <- symbol("x")
-  sol2 <- solve_sys(as_symbol("x**2 + 1"), x)
+  sol2 <- solve_sys(as_sym("x**2 + 1"), x)
   
   expect_equal(as.character(sol1), as.character(sol2))
   
@@ -66,9 +66,9 @@ test_that("solve_sys(lhs, vars)", {
   # Multiple variables
   ###################################################################
   # Must be as a row vector (1 x m matrix), not a list....
-  lhs <- t(as_symbol(matrix(c("x**2 + 1", "y+3"))))
+  lhs <- t(as_sym(matrix(c("x**2 + 1", "y+3"))))
   sol1 <- solve_sys(lhs, c("x", "y"))
-  sol1_ord <- order(unlist(lapply(sol1, function(l) Arg(as_r(l$x)))))
+  sol1_ord <- order(unlist(lapply(sol1, function(l) Arg(as_expr(l$x)))))
   sol1 <- sol1[sol1_ord]
   
   expect_equal(length(sol1), 2L)
@@ -80,8 +80,8 @@ test_that("solve_sys(lhs, vars)", {
   expect_equal(as.character(sol1[[2L]]$y), "-3")
   
   y <- symbol("y")
-  sol2 <- solve_sys(lhs, c(x, y))
-  sol2_ord <- order(unlist(lapply(sol2, function(l) Arg(as_r(l$x)))))
+  sol2 <- solve_sys(lhs, list(x, y))
+  sol2_ord <- order(unlist(lapply(sol2, function(l) Arg(as_expr(l$x)))))
   sol2 <- sol2[sol2_ord]
   
   expect_equal(length(sol2), 2L)
@@ -96,7 +96,7 @@ test_that("solve_sys(lhs, vars)", {
 test_that("solve_sys(lhs, rhs, vars)", {
   skip_if_no_sympy()
   
-  sol1 <- solve_sys(as_symbol("x**2"), as_symbol("-1"), "x")
+  sol1 <- solve_sys(as_sym("x**2"), as_sym("-1"), "x")
   #sol1
   
   expect_equal(length(sol1), 2L)
@@ -112,17 +112,17 @@ test_that("solve system of non-linear equations", {
   skip_if_no_sympy()
   
   # Multinomial likelihood
-  p <- as_symbol(paste0("p", 1:3))
-  y <- as_symbol(paste0("y", 1:3))
-  a <- as_symbol("a")
+  p <- as_sym(paste0("p", 1:3))
+  y <- as_sym(paste0("y", 1:3))
+  a <- as_sym("a")
   l <- sum(y*log(p))
   L <- -l + a*(sum(p) - 1)
-  g <- der(L, c(a, p))
+  g <- der(L, list(a, p))
   expect_match(as.character(g), 
                "[p1 + p2 + p3 - 1, a - y1/p1, a - y2/p2, a - y3/p3]", 
                fixed = TRUE)
   
-  sols <- solve_sys(g, c(a, p))
+  sols <- solve_sys(g, list(a, p))
   expect_equal(length(sols), 1L)
   
   sol <- sols[[1L]]
@@ -132,9 +132,60 @@ test_that("solve system of non-linear equations", {
   expect_match(as.character(sol$p3), "y3/(y1 + y2 + y3)", fixed = TRUE)
   expect_match(as.character(sol$a), "y1 + y2 + y3", fixed = TRUE)
   
-  H <- der2(L, c(p, a))
+  H <- der2(L, list(p, a))
   H_sol <- subs_lst(H, sol)
   expect_match(as.character(H_sol), 
                "[[(y1 + y2 + y3)^2/y1, 0, 0, 1], [0, (y1 + y2 + y3)^2/y2, 0, 1], [0, 0, (y1 + y2 + y3)^2/y3, 1], [1, 1, 1, 0]]", 
                fixed = TRUE)
 })
+
+
+
+test_that("input variations", {
+  skip_if_no_sympy()
+  
+  
+  # Analysis of variance - one-way ANOVA
+  ngrp <- 3   # number of groups
+  spg  <- 2   # number of subjects per group
+  g <- seq_len(ngrp)
+  f <- factor(rep(g, each = spg))
+  y <- as_sym(matrix(paste0("y", seq_along(f))))
+  X <- as_sym(model.matrix(~ f))
+  XtX <- t(X) %*% X
+  XtXinv <- inv(XtX)
+  Xty <- t(X) %*% y
+  beta_hat <- XtXinv %*% Xty
+
+  beta <- as_sym(paste0("beta", 1:3))
+  res <- y - X %*% beta
+  RSS <- sum(res^2) 
+  logL <- - RSS / 2
+  
+  Score <- der(logL, beta) %>% matrify()
+  
+  beta_lst <- listify(beta)
+  sol1 <- solve_sys(Score, beta_lst)
+  sol2 <- solve_sys(Score, beta)
+  
+  expect_equal(length(sol1), 1L)
+  expect_equal(length(sol2), 1L)
+  
+  sol1 <- sol1[[1L]]
+  sol2 <- sol2[[1L]]
+  
+  expect_equal(paste0(sapply(sol1, as.character), collapse = ";"), 
+               "y1/2 + y2/2;-y1/2 - y2/2 + y3/2 + y4/2;-y1/2 - y2/2 + y5/2 + y6/2")
+  
+  expect_equal(paste0(sapply(sol1, as.character), collapse = ";"), 
+               paste0(sapply(sol2, as.character), collapse = ";"))
+  
+  
+  sol1_mat <- t(do.call(cbind, sol1))
+  expect_equal(as.character(sol1_mat), 
+               "Matrix([[y1/2 + y2/2], [-y1/2 - y2/2 + y3/2 + y4/2], [-y1/2 - y2/2 + y5/2 + y6/2]])")
+  expect_equal(as.character(sol1_mat), 
+               as.character(beta_hat))
+  
+})
+

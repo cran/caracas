@@ -12,11 +12,11 @@ inline_code <- function(x) {
   x
 }
 
-if (!have_sympy()) {
+if (!has_sympy()) {
   # SymPy not available, so the chunks shall not be evaluated
   knitr::opts_chunk$set(eval = FALSE)
   
-  inline_code <- inline_code <- function(x) {
+  inline_code <- function(x) {
     deparse(substitute(x))
   }
 }
@@ -26,7 +26,7 @@ x <- symbol('x')
 eq <- 2*x^2 - x
 eq
 as.character(eq)
-as_r(eq)
+as_expr(eq)
 tex(eq)
 
 ## -----------------------------------------------------------------------------
@@ -36,12 +36,13 @@ subs(eq, x, "y")
 
 ## -----------------------------------------------------------------------------
 A <- matrix(c("x", 2, 0, "2*x"), 2, 2)
-B <- as_symbol(A)
+B <- as_sym(A)
 B
 Binv <- inv(B) # or solve_lin(B)
 Binv
 tex(Binv)
 
 ## -----------------------------------------------------------------------------
-eigen_val(Binv)
+eigenval(Binv)
+eigenvec(Binv)
 

@@ -4,22 +4,43 @@
 \alias{der}
 \title{Symbolic differentiation of an expression}
 \usage{
-der(expr, vars)
+der(expr, vars, simplify = TRUE)
 }
 \arguments{
 \item{expr}{A \code{caracas_symbol}}
 
 \item{vars}{variables to take derivate with respect to}
+
+\item{simplify}{Simplify result}
 }
 \description{
 Symbolic differentiation of an expression
 }
 \examples{
-if (have_sympy()) {
+if (has_sympy()) {
   x <- symbol("x")
   y <- symbol("y")
   f <- 3*x^2 + x*y^2
   der(f, x)
+  g <- der(f, list(x, y))
+  g
+  dim(g)
+  G <- matrify(g)
+  G
+  dim(G)
+  
+  h <- der(g, list(x, y))
+  h
+  dim(h)
+  as.character(h)
+  H <- matrify(h)
+  H
+  dim(H)
+  
+  g \%>\% 
+    der(list(x, y)) \%>\% 
+    der(list(x, y)) \%>\% 
+    der(list(x, y))
 }
 
 }

@@ -17,13 +17,17 @@ subs(s, x, v)
 Substitute symbol for value
 }
 \examples{
-if (have_sympy()) {
+if (has_sympy()) {
    x <- symbol('x')
    e <- 2*x^2
    e
    subs(e, "x", "2")
-   y <- as_symbol("2")
+   y <- as_sym("2")
    subs(e, "x", y)
 }
 
 }
+\seealso{
+\code{\link[=subs_vec]{subs_vec()}}, \code{\link[=subs_lst]{subs_lst()}}
+}
+\concept{caracas_symbol}

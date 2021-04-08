@@ -4,22 +4,30 @@
 \alias{der2}
 \title{Symbolic differentiation of second order of an expression}
 \usage{
-der2(expr, vars)
+der2(expr, vars, simplify = TRUE)
 }
 \arguments{
 \item{expr}{A \code{caracas_symbol}}
 
 \item{vars}{variables to take derivate with respect to}
+
+\item{simplify}{Simplify result}
 }
 \description{
 Symbolic differentiation of second order of an expression
 }
 \examples{
-if (have_sympy()) {
+if (has_sympy()) {
   x <- symbol("x")
   y <- symbol("y")
   f <- 3*x^2 + x*y^2
   der2(f, x)
+  h <- der2(f, list(x, y))
+  h
+  dim(h)
+  H <- matrify(h)
+  H
+  dim(H)
 }
 
 }

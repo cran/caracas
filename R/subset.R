@@ -2,11 +2,17 @@ convert_to_r_mat <- function(x) {
   xmat <- matrix(NA_character_, nrow = nrow(x), ncol = ncol(x))
   xlst <- x$pyobj$tolist()
   
+  offset <- 0L # R lists do not change
+  
+  if (inherits(xlst, "python.builtin.list")) {
+    offset <- 1L # A Python list has offset 0
+  }
+  
   for (i in seq_along(xlst)) {
-    row_i <- xlst[[i-1L]] # 0-based
+    row_i <- xlst[[i - offset]] 
     
     for (j in seq_along(row_i)) {
-      xmat[i, j] <- as.character(row_i[[j - 1L]]) # 0-based
+      xmat[i, j] <- as.character(row_i[[j - offset]])
     }
   }
   
@@ -37,9 +43,9 @@ convert_to_r_mat <- function(x) {
 #' @param drop Simplify dimensions of resulting object
 #' 
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
-#'   B <- as_symbol(A)
+#'   B <- as_sym(A)
 #'   B[1:2, ]
 #'   B[, 2]
 #'   B[2, , drop = FALSE]
@@ -65,7 +71,7 @@ convert_to_r_mat <- function(x) {
   
   xmat <- convert_to_r_mat(x)
   xmat_subset <- base::`[`(xmat, i, j, ..., drop = drop)
-  y <- as_symbol(xmat_subset)
+  y <- as_sym(xmat_subset)
   return(y)
 }
 
@@ -78,9 +84,9 @@ convert_to_r_mat <- function(x) {
 #' @param value Replacement value
 #' 
 #' @examples 
-#' if (have_sympy()) {
+#' if (has_sympy()) {
 #'   A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
-#'   B <- as_symbol(A)
+#'   B <- as_sym(A)
 #'   B[, 2] <- "x"
 #'   B
 #' }
@@ -107,7 +113,7 @@ convert_to_r_mat <- function(x) {
     base::`[<-`(xmat, i, j, ..., value = value)
   }
   
-  y <- as_symbol(xmat_mod)
+  y <- as_sym(xmat_mod)
   return(y)
 }
 

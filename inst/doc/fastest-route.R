@@ -12,11 +12,11 @@ inline_code <- function(x) {
   x
 }
 
-if (!have_sympy()) {
+if (!has_sympy()) {
   # SymPy not available, so the chunks shall not be evaluated
   knitr::opts_chunk$set(eval = FALSE)
   
-  inline_code <- inline_code <- function(x) {
+  inline_code <- function(x) {
     deparse(substitute(x))
   }
 }
@@ -62,9 +62,9 @@ text(kat/2, A/1.7, labels = "|AC| = 1,000 m", pos = 3)
 par(mar = old_mar)
 
 ## -----------------------------------------------------------------------------
-AB <- as_symbol('300')
+AB <- as_sym('300')
 AB
-AC <- as_symbol('1000')
+AC <- as_sym('1000')
 AC
 BC <- sqrt(AC^2 - AB^2)
 BC
@@ -78,9 +78,9 @@ l <- AD/2 + DC/5
 l
 
 ## ---- fig.width=7, fig.height=5-----------------------------------------------
-lfun <- as_r(l)
+lfun <- as_expr(l)
 lfun
-ks <- seq(0, as_r(AC), length.out = 100)
+ks <- seq(0, as_expr(AC), length.out = 100)
 ls <- eval(lfun, list(k = ks))
 plot(ks, ls, type = "l", xlab = "k", ylab = "Time A to C")
 
@@ -93,7 +93,7 @@ best_k <- crit_points[[1]]$k
 best_k
 
 ## -----------------------------------------------------------------------------
-eval(as_r(der(dl, k)), list(k = as_r(best_k)))
+eval(as_expr(der(dl, k)), list(k = as_expr(best_k)))
 
 ## -----------------------------------------------------------------------------
 DC_best <- BC - best_k
@@ -101,12 +101,12 @@ AD_best <- sqrt(AB^2 + best_k^2)
 AD_best
 best_route <- AD_best + DC_best
 best_route
-as_r(best_route)
+as_expr(best_route)
 
 ## -----------------------------------------------------------------------------
 best_l <- subs(l, "k", best_k)
 best_l
-as_r(best_l)
+as_expr(best_l)
 
 ## ---- echo = FALSE, fig.width=8, fig.height=5---------------------------------
 old_mar <- par("mar")
@@ -118,7 +118,7 @@ pA <- c(0, A)
 pB <- c(0, 0)
 pC <- c(kat, 0)
 
-D <- as_r(best_k)
+D <- as_expr(best_k)
 pD <- c(D, 0)
 
 pad <- 40
