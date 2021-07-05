@@ -139,36 +139,36 @@ test_that("as_character_matrix", {
 test_that("do_la", {
   skip_if_no_sympy()
   
-  A <- matrix(c("a", "0", "0", "1"), 2, 2) %>% as_sym()
+  A <- matrix(c("2", "0", "0", "1"), 2, 2) %>% as_sym()
   
   
   res <- QRdecomposition(A)
-  expect_equal(as.character(res$Q), "Matrix([[a/Abs(a), 0], [0, 1]])")
-  expect_equal(as.character(res$R), "Matrix([[Abs(a), 0], [0, 1]])")
+  expect_equal(as.character(res$Q), "Matrix([[1, 0], [0, 1]])")
+  expect_equal(as.character(res$R), "Matrix([[2, 0], [0, 1]])")
   
   
   res <- inv(A)
-  expect_equal(as.character(res), "Matrix([[1/a, 0], [0, 1]])")
+  expect_equal(as.character(res), "Matrix([[1/2, 0], [0, 1]])")
 
   res <- det(A)
-  expect_equal(as.character(res), "a")
+  expect_equal(as.character(res), "2")
 
   res <- eigenval(A)
-  expect_equal(as.character(res[[1]]$eigval), "a")
+  expect_equal(as.character(res[[1]]$eigval), "2")
   expect_equal(res[[1]]$eigmult, 1)
   expect_equal(as.character(res[[2]]$eigval), "1")
   expect_equal(res[[2]]$eigmult, 1)
   
   
   p <- do_la(A, "charpoly")
-  expect_equal(as.character(p), "a + lambda^2 + lambda*(-a - 1)")
-  expect_equal(as.character(as_expr(p)), "a + lambda^2 + lambda * (-a - 1)")
+  expect_equal(as.character(p), "lambda^2 - 3*lambda + 2")
+  expect_equal(as.character(as_expr(p)), "lambda^2 - 3 * lambda + 2")
   
   expect_equal(as_expr(do_la(A, "rank")), 2L)
   
   expect_equal(as_expr(do_la(A, "cofactor", 0, 1)), 0L)
   
-  expect_equal(as.character(do_la(A, "echelon_form")), "Matrix([[a, 0], [0, 1]])")
+  expect_equal(as.character(do_la(A, "echelon_form")), "Matrix([[2, 0], [0, 1]])")
   
   
   B <- as_sym("[[9, 3*I], [-3*I, 5]]")
