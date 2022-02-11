@@ -14,6 +14,7 @@
 
 <title>Fastest route through the forest</title>
 
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -34,26 +35,28 @@
   }
 </style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -62,9 +65,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -122,187 +125,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<style type="text/css">body {
-background-color: #fff;
-margin: 1em auto;
-max-width: 700px;
-overflow: visible;
-padding-left: 2em;
-padding-right: 2em;
-font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-font-size: 14px;
-line-height: 1.35;
-}
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
-}
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
-}
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
-}
-#TOC ul ul {
-margin-left: -2em;
-}
-#TOC li {
-line-height: 16px;
-}
-table {
-margin: 1em auto;
-border-width: 1px;
-border-color: #DDDDDD;
-border-style: outset;
-border-collapse: collapse;
-}
-table th {
-border-width: 2px;
-padding: 5px;
-border-style: inset;
-}
-table td {
-border-width: 1px;
-border-style: inset;
-line-height: 18px;
-padding: 5px 5px;
-}
-table, table th, table td {
-border-left-style: none;
-border-right-style: none;
-}
-table thead, table tr.even {
-background-color: #f7f7f7;
-}
-p {
-margin: 0.5em 0;
-}
-blockquote {
-background-color: #f6f6f6;
-padding: 0.25em 0.75em;
-}
-hr {
-border-style: solid;
-border: none;
-border-top: 1px solid #777;
-margin: 28px 0;
-}
-dl {
-margin-left: 0;
-}
-dl dd {
-margin-bottom: 13px;
-margin-left: 13px;
-}
-dl dt {
-font-weight: bold;
-}
-ul {
-margin-top: 0;
-}
-ul li {
-list-style: circle outside;
-}
-ul ul {
-margin-bottom: 0;
-}
-pre, code {
-background-color: #f7f7f7;
-border-radius: 3px;
-color: #333;
-white-space: pre-wrap; 
-}
-pre {
-border-radius: 3px;
-margin: 5px 0px 10px 0px;
-padding: 10px;
-}
-pre:not([class]) {
-background-color: #f7f7f7;
-}
-code {
-font-family: Consolas, Monaco, 'Courier New', monospace;
-font-size: 85%;
-}
-p > code, li > code {
-padding: 2px 0px;
-}
-div.figure {
-text-align: center;
-}
-img {
-background-color: #FFFFFF;
-padding: 2px;
-border: 1px solid #DDDDDD;
-border-radius: 3px;
-border: 1px solid #CCCCCC;
-margin: 0 5px;
-}
-h1 {
-margin-top: 0;
-font-size: 35px;
-line-height: 40px;
-}
-h2 {
-border-bottom: 4px solid #f7f7f7;
-padding-top: 10px;
-padding-bottom: 2px;
-font-size: 145%;
-}
-h3 {
-border-bottom: 2px solid #f7f7f7;
-padding-top: 10px;
-font-size: 120%;
-}
-h4 {
-border-bottom: 1px solid #f7f7f7;
-margin-left: 8px;
-font-size: 105%;
-}
-h5, h6 {
-border-bottom: 1px solid #ccc;
-font-size: 105%;
-}
-a {
-color: #0033dd;
-text-decoration: none;
-}
-a:hover {
-color: #6666ff; }
-a:visited {
-color: #800080; }
-a:visited:hover {
-color: #BB00BB; }
-a[href^="http:"] {
-text-decoration: underline; }
-a[href^="https:"] {
-text-decoration: underline; }
-
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; } 
-code > span.er { color: #a61717; background-color: #e3d2d2; } 
-</style>
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
 
 
 
@@ -318,7 +141,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(caracas)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caracas)</span></code></pre></div>
 <p>A <a href="https://ing.dk/artikel/taenkeboks-hurtigste-vej-mellem-a-b-1150-m-lang-232871">problem</a> was posted by the Danish newspaper, <em>Ingeniøren</em>, and it goes like this:</p>
 <p>You are in the middle of a dense forest located at <span class="math inline">\(A\)</span>. You need to get to <span class="math inline">\(C\)</span> in the fastest way possible, and you can only change direction once. You can walk directly via <span class="math inline">\(AB\)</span> to the dedicated walking path <span class="math inline">\(BC\)</span> where you can walk fast, you can take the direct path through the forest (<span class="math inline">\(AC\)</span>) where you have to walk slower, or cross through the forest to the dedicated walking path (<span class="math inline">\(AD\)</span> and then <span class="math inline">\(DC\)</span>).</p>
 <p><img src="data:image/png;base64,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biUlJVOnTgWmTJmyep2JEyeef/755WaYMWMGHbP291+VP3VeieH8l8rnAJW1JTwG28HJNfqit2AADIbzq/yNkqSo7LTTTkVFOTn6AbRs2XKzzTaryporV64cPXr0brvttu222wJ9+/ZdsWLF8OHDhwwZUqfOumendO36f6fBtm3bFth9993Lvly1ahUwceLEvn37AltvvXXTpk2HDBly3nnnHXrooX379l29XOuIoQCNqfIc5ybwMHSHrtCh+l90HhwDw6Ad3AlHVH8LkqT8dtRRR82YMSNHh8B22WWXjTfeuCprNmjQYMCAAWWXHHnkkaNHj547d27miUF169Zd57OZG5wwYcJNN90EbLrppi+88MKVV155xhlnLFu2bJdddrnssstWnxuksmIoQNW6i0VHGAHHwps1+sNtCQ/C6/BV9T8rSYpBhw4dOnSowW/J2fTFF1/Mnz+/S5cuRUX/d9ZsvXr1gNVn81TX4sWLFyxYsOYP1aVLl8cff3zp0qUvv/zyjTfe2L9//5kzZ7Zr1y5b4QtDDFeBVdcpcFnt/mS7waGlz8etb9K0JEnVNH369K5du44ZM2bNkkmTJm255ZYtW7aswdYmTZrUu3fv1c8feeSRdu3afffdd8XFxT169Bg1atSqVavmzp2bndwFJIY9QOudA5RpwPpXqarv4QDoB1dCi+xtVpKUYt27d999992HDBkyZ86cLl26/P3vf//jH/84bty4mm1twoQJQ4cOXf185513njdv3oABA84444wlS5bcd999zZs379atW/ayF4gY9gCtdw5QReZD7Wcf/ALegUbQER6o9dYkSYK6des+//zzJ5xwwoMPPnjcccdNnTp10qRJxxxzTA02tXz58rfeemvNmdHbbbfd+PHjFy5cOGDAgMGDB9erV2/KlClOR8xU0HOAHoPL4bUsXdL1ISyCPbKxKUlS1lVtDpDWSPkcoBj2ANXY0bAb1PbWcqXalGk/t8JLWdqsJElKXAwFqOpzgDLdCbPgz1lMA8DWcDL0gw+yvWVJkpR7MRSgMbBvTT9bDA/Bc9mMA9AX3oFusCfcle2NS5KkHIuhAFVrDlCmDjA6O0HW0ggugllwcA42LkmScimGApTPfgJtS59fDo+GzCJJkqoohgI0EKZmYzvnwv3Z2E5FDoZrYR/4dy6/RZIk1VoMBajGc4DWcSYMhbeysaly7QfT4FToBzfm7FskSYXi9ttv32OPPZo2bdq+ffuRI0euXLmylhu84oorRo/OxWkfBSiGApQt28OtcCwsydlX1IFT4F04MWdfIUkqCNdcc83gwYP33nvvsWPHHnXUUcOGDRs+fHgtt/nEE0/06dMnK/EKXgy3wsii4+EZuApG5vJbGkPj0ucDYRcYlLq/aUlSJVasWHHDDTecffbZN954I9C7d+8ffvhh5MiRV1xxxTr3fq+6Dz/8sFmzZg59rqIY9gDVZg5QplEwJHtbW6+zYSLsCE8m+KWSpPz2ySeffPvtt2X31uy5555Lly79+OOP11mzdevWt9xyy1577dWkSZM2bdqMGjXqs88+O/zww5s1a7b11ls/9NBDa9acMGHCUUcdBUyfPr1nz57NmjVr3rz50UcfPX9+7W8LVYhKcoASsvlYntWtBXlMhg5wTegYPnz48FHAj0YsXbo0Fz/UcmHZsmUffPDBsmXL1iwZMmRIcXFx5h+hVatW9evXv/zyy5999tk+ffoUFRW1atXq5ptvnjx5crdu3Ro1arRkyZLVa+69994ff/zx999/37Jly7322mvMmDF333335ptv3qNHj3IzzJgxg45Z+/vP0V9U7sRwYKaWc4AqcjecmNV9S5XoBYdAbU9ukyRlwYsvvjh58uQ1L0866aSOHTtmcXlVNGzYsE2bNmtePvjgg7fddtuQIUPKvZfZkUceedVVVwFbbLHFk08+2a9fv3PPPRf48ccf+/TpM2/evE6dOn3++ec//PBD69atp02b9vnnnz/44IMHHXQQ0LJly5dffrmKqVIlhgKUI2/AK7mZkViuurDmqG4/6AQXJlW/JEllNG7cuFmzZmterukc2VpeLYsWLRo6dOj9999/yimnXHfddeWu07Vr19VP2rZtC6y58fvql6tWrQImTpzYt29fYOutt27atOmQIUPOO++8Qw89tG/fvquXa1252K2U5b2ap8LrOdhZuhR2gntD7KedD4OgJdwCK0ME8OHDh4/Ce0R1CGy1SZMmtWjRYptttpk4cWJF67Rq1WrkyJGrn6++Tv7RRx9d/XL27NnAm2++WVJScuihh86cOXP18mnTph1++OGrC9kuu+zy2GOPlbvllB8Ci+Ek6GzNAVpHIxgDF8PMHGy8cq3gbngSHoPy674kqcBNnjz5iCOOOOaYY2bNmlXL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" /><!-- --></p>
@@ -342,87 +165,87 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h3>Length of line segments</h3>
 <p>We parameterise with <span class="math inline">\(k = |BD|\)</span>, the distance between <span class="math inline">\(B\)</span> and <span class="math inline">\(D\)</span>. That is, how much to walk on fast walking path before crossing into the forest.</p>
 <p>Formulating using <code>caracas</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">AB &lt;-<span class="st"> </span><span class="kw">as_sym</span>(<span class="st">&#39;300&#39;</span>)</a>
-<a class="sourceLine" id="cb2-2" title="2">AB</a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="co">#&gt; [caracas]: 300</span></a>
-<a class="sourceLine" id="cb2-4" title="4">AC &lt;-<span class="st"> </span><span class="kw">as_sym</span>(<span class="st">&#39;1000&#39;</span>)</a>
-<a class="sourceLine" id="cb2-5" title="5">AC</a>
-<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; [caracas]: 1000</span></a>
-<a class="sourceLine" id="cb2-7" title="7">BC &lt;-<span class="st"> </span><span class="kw">sqrt</span>(AC<span class="op">^</span><span class="dv">2</span> <span class="op">-</span><span class="st"> </span>AB<span class="op">^</span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb2-8" title="8">BC</a>
-<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; [caracas]: 100⋅√91</span></a>
-<a class="sourceLine" id="cb2-10" title="10">k &lt;-<span class="st"> </span><span class="kw">symbol</span>(<span class="st">&#39;k&#39;</span>) <span class="co"># |BD|</span></a>
-<a class="sourceLine" id="cb2-11" title="11">DC &lt;-<span class="st"> </span>BC <span class="op">-</span><span class="st"> </span>k</a>
-<a class="sourceLine" id="cb2-12" title="12">AD &lt;-<span class="st"> </span><span class="kw">sqrt</span>(AB<span class="op">^</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>k<span class="op">^</span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb2-13" title="13">AD</a>
-<a class="sourceLine" id="cb2-14" title="14"><span class="co">#&gt; [caracas]:    ____________</span></a>
-<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt;              ╱  2         </span></a>
-<a class="sourceLine" id="cb2-16" title="16"><span class="co">#&gt;            ╲╱  k  + 90000</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>AB <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(<span class="st">&#39;300&#39;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>AB</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]: 300</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>AC <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(<span class="st">&#39;1000&#39;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>AC</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]: 1000</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>BC <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(AC<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> AB<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>BC</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]: 100⋅√91</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="fu">symbol</span>(<span class="st">&#39;k&#39;</span>) <span class="co"># |BD|</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>DC <span class="ot">&lt;-</span> BC <span class="sc">-</span> k</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>AD <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(AB<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> k<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>AD</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]:    ____________</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              ╱  2         </span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            ╲╱  k  + 90000</span></span></code></pre></div>
 <p>So for a distance of <span class="math inline">\(|AD|\)</span>, you travel by 5 m/s, and then for a distance of <span class="math inline">\(- k + 100 \sqrt{91}\)</span> you travel by 2 m/s. Thus it takes <span class="math inline">\(\frac{\sqrt{k^{2} + 90000}}{2}\)</span> to travel <span class="math inline">\(AD\)</span> and <span class="math inline">\(- \frac{k}{5} + 20 \sqrt{91}\)</span> to travel <span class="math inline">\(DC\)</span>.</p>
 <p>The question is: What is the fastest way to get from <span class="math inline">\(A\)</span> to <span class="math inline">\(C\)</span>?</p>
 <p>First, the total duration of the route is:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">l &lt;-<span class="st"> </span>AD<span class="op">/</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>DC<span class="op">/</span><span class="dv">5</span></a>
-<a class="sourceLine" id="cb3-2" title="2">l</a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt; [caracas]:          ____________         </span></a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt;                    ╱  2                  </span></a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt;              k   ╲╱  k  + 90000          </span></a>
-<a class="sourceLine" id="cb3-6" title="6"><span class="co">#&gt;            - ─ + ─────────────── + 20⋅√91</span></a>
-<a class="sourceLine" id="cb3-7" title="7"><span class="co">#&gt;              5          2</span></a></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">lfun &lt;-<span class="st"> </span><span class="kw">as_expr</span>(l)</a>
-<a class="sourceLine" id="cb4-2" title="2">lfun</a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; expression(-k/5 + sqrt(k^2 + 90000)/2 + 20 * sqrt(91))</span></a>
-<a class="sourceLine" id="cb4-4" title="4">ks &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="kw">as_expr</span>(AC), <span class="dt">length.out =</span> <span class="dv">100</span>)</a>
-<a class="sourceLine" id="cb4-5" title="5">ls &lt;-<span class="st"> </span><span class="kw">eval</span>(lfun, <span class="kw">list</span>(<span class="dt">k =</span> ks))</a>
-<a class="sourceLine" id="cb4-6" title="6"><span class="kw">plot</span>(ks, ls, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;k&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;Time A to C&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>l <span class="ot">&lt;-</span> AD<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> DC<span class="sc">/</span><span class="dv">5</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>l</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]:          ____________         </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                    ╱  2                  </span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              k   ╲╱  k  + 90000          </span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            - ─ + ─────────────── + 20⋅√91</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              5          2</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>lfun <span class="ot">&lt;-</span> <span class="fu">as_expr</span>(l)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>lfun</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; expression(-k/5 + sqrt(k^2 + 90000)/2 + 20 * sqrt(91))</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>ks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">as_expr</span>(AC), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ls <span class="ot">&lt;-</span> <span class="fu">eval</span>(lfun, <span class="fu">list</span>(<span class="at">k =</span> ks))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ks, ls, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;k&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Time A to C&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
 <p>It looks like a minimum around <span class="math inline">\(k = 150\)</span>.</p>
 <p>We find the analytical solution by first finding critical points:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">dl &lt;-<span class="st"> </span><span class="kw">der</span>(l, k)</a>
-<a class="sourceLine" id="cb5-2" title="2">dl</a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; [caracas]:         k           1</span></a>
-<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt;            ───────────────── - ─</span></a>
-<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt;                 ____________   5</span></a>
-<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt;                ╱  2             </span></a>
-<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt;            2⋅╲╱  k  + 90000</span></a>
-<a class="sourceLine" id="cb5-8" title="8">crit_points &lt;-<span class="st"> </span><span class="kw">solve_sys</span>(dl, k)</a>
-<a class="sourceLine" id="cb5-9" title="9">crit_points</a>
-<a class="sourceLine" id="cb5-10" title="10"><span class="co">#&gt; Solution 1:</span></a>
-<a class="sourceLine" id="cb5-11" title="11"><span class="co">#&gt;   k =  200⋅√21</span></a>
-<a class="sourceLine" id="cb5-12" title="12"><span class="co">#&gt;       ───────</span></a>
-<a class="sourceLine" id="cb5-13" title="13"><span class="co">#&gt;          7</span></a>
-<a class="sourceLine" id="cb5-14" title="14">best_k &lt;-<span class="st"> </span>crit_points[[<span class="dv">1</span>]]<span class="op">$</span>k</a>
-<a class="sourceLine" id="cb5-15" title="15">best_k</a>
-<a class="sourceLine" id="cb5-16" title="16"><span class="co">#&gt; [caracas]: 200⋅√21</span></a>
-<a class="sourceLine" id="cb5-17" title="17"><span class="co">#&gt;            ───────</span></a>
-<a class="sourceLine" id="cb5-18" title="18"><span class="co">#&gt;               7</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dl <span class="ot">&lt;-</span> <span class="fu">der</span>(l, k)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dl</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]:         k           1</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            ───────────────── - ─</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 ____________   5</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                ╱  2             </span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            2⋅╲╱  k  + 90000</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>crit_points <span class="ot">&lt;-</span> <span class="fu">solve_sys</span>(dl, k)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>crit_points</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Solution 1:</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   k =  200⋅√21</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       ───────</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          7</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>best_k <span class="ot">&lt;-</span> crit_points[[<span class="dv">1</span>]]<span class="sc">$</span>k</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>best_k</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]: 200⋅√21</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            ───────</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               7</span></span></code></pre></div>
 <p>The type of the critical point is found by considering the Hessian:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">eval</span>(<span class="kw">as_expr</span>(<span class="kw">der</span>(dl, k)), <span class="kw">list</span>(<span class="dt">k =</span> <span class="kw">as_expr</span>(best_k)))</a>
-<a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt; [1] 0.001283121</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">eval</span>(<span class="fu">as_expr</span>(<span class="fu">der</span>(dl, k)), <span class="fu">list</span>(<span class="at">k =</span> <span class="fu">as_expr</span>(best_k)))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.001283121</span></span></code></pre></div>
 <p>Thus the critical point is indeed a minimum as suggested by the plot.</p>
 <p>The fastest route is thus obtained for <span class="math display">\[
   k = \frac{200 \sqrt{21}}{7} \approx 130.93 .
 \]</span> It has a length of (in meters)</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">DC_best &lt;-<span class="st"> </span>BC <span class="op">-</span><span class="st"> </span>best_k</a>
-<a class="sourceLine" id="cb7-2" title="2">AD_best &lt;-<span class="st"> </span><span class="kw">sqrt</span>(AB<span class="op">^</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>best_k<span class="op">^</span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb7-3" title="3">AD_best</a>
-<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; [caracas]: 500⋅√21</span></a>
-<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt;            ───────</span></a>
-<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt;               7</span></a>
-<a class="sourceLine" id="cb7-7" title="7">best_route &lt;-<span class="st"> </span>AD_best <span class="op">+</span><span class="st"> </span>DC_best</a>
-<a class="sourceLine" id="cb7-8" title="8">best_route</a>
-<a class="sourceLine" id="cb7-9" title="9"><span class="co">#&gt; [caracas]: 300⋅√21          </span></a>
-<a class="sourceLine" id="cb7-10" title="10"><span class="co">#&gt;            ─────── + 100⋅√91</span></a>
-<a class="sourceLine" id="cb7-11" title="11"><span class="co">#&gt;               7</span></a>
-<a class="sourceLine" id="cb7-12" title="12"><span class="kw">as_expr</span>(best_route)</a>
-<a class="sourceLine" id="cb7-13" title="13"><span class="co">#&gt; [1] 1150.335</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>DC_best <span class="ot">&lt;-</span> BC <span class="sc">-</span> best_k</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>AD_best <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(AB<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> best_k<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>AD_best</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]: 500⋅√21</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            ───────</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               7</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>best_route <span class="ot">&lt;-</span> AD_best <span class="sc">+</span> DC_best</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>best_route</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]: 300⋅√21          </span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            ─────── + 100⋅√91</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               7</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">as_expr</span>(best_route)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1150.335</span></span></code></pre></div>
 <p><span class="math display">\[
   \frac{300 \sqrt{21}}{7} + 100 \sqrt{91} \approx 1150.34
 \]</span> and takes (in seconds)</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">best_l &lt;-<span class="st"> </span><span class="kw">subs</span>(l, <span class="st">&quot;k&quot;</span>, best_k)</a>
-<a class="sourceLine" id="cb8-2" title="2">best_l</a>
-<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [caracas]: 30⋅√21 + 20⋅√91</span></a>
-<a class="sourceLine" id="cb8-4" title="4"><span class="kw">as_expr</span>(best_l)</a>
-<a class="sourceLine" id="cb8-5" title="5"><span class="co">#&gt; [1] 328.2651</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>best_l <span class="ot">&lt;-</span> <span class="fu">subs</span>(l, <span class="st">&quot;k&quot;</span>, best_k)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>best_l</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [caracas]: 30⋅√21 + 20⋅√91</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">as_expr</span>(best_l)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 328.2651</span></span></code></pre></div>
 <p><span class="math display">\[
   30 \sqrt{21} + 20 \sqrt{91} \approx 328.27
 \]</span></p>
