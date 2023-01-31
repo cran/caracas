@@ -13,24 +13,22 @@ indent_not_first_line <- function(x, indent = 0) {
 }
 
 get_caracas_out <- function(x, 
-                            caracas_prefix = TRUE, 
-                            prettyascii = getOption("caracas.print.prettyascii", 
-                                                    default = FALSE),
-                            ascii = getOption("caracas.print.ascii", 
-                                              default = FALSE),
-                            rowvec = getOption("caracas.print.rowvec", 
-                                                default = TRUE)) {
+                            prompt = getOption("caracas.prompt", default = "[caracas]: "), 
+                            method = getOption("caracas.print.method", default = "utf8"),
+                            rowvec = getOption("caracas.print.rowvec", default = TRUE)) {
   ensure_sympy()
   
   if (is.null(x$pyobj)) {
     stop("Unexpected")
   }
   
+  method <- match.arg(method, choices = c("utf8", "prettyascii", "ascii"))
+  
   py <- get_py()
   
   suffix <- ""
   
-  out <- if (!is.null(prettyascii) && as.logical(prettyascii) == TRUE) {
+  out <- if (method == "prettyascii") {
     # 'prettyascii'
     if (rowvec && symbol_is_matrix(x) && ncol(x) == 1L && nrow(x) > 1L) {
       #suffix <- intToUtf8(7488L) # T utf-8
@@ -41,10 +39,12 @@ get_caracas_out <- function(x,
       #reticulate::py_capture_output(get_sympy()$pprint(x$pyobj, use_unicode = FALSE))
       reticulate::py_capture_output(py$print_caracas(x$pyobj))
     }
-  } else if (!is.null(ascii) && as.logical(ascii) == TRUE) {
+  } else if (method == "ascii") {
     # 'ascii'
     python_strings_to_r(get_sympy()$sstr(x$pyobj))
   } else {
+    stopifnot(method == "utf8")
+    
     # 'utf8'
     if (rowvec && symbol_is_matrix(x) && ncol(x) == 1L && nrow(x) > 1L) {
       suffix <- intToUtf8(7488L) # T utf-8
@@ -56,12 +56,11 @@ get_caracas_out <- function(x,
     }
   }
   
-  out <- gsub("[ \n]+$", "", out)
+  out <- gsub("[ \n]+$", "", out) 
   
-  if (caracas_prefix) {
-    prefix <- '[caracas]: '
-    out <- indent_not_first_line(out, indent = nchar(prefix))
-    out <- paste0(prefix, out)
+  if (nchar(prompt) > 0) {
+    out <- indent_not_first_line(out, indent = nchar(prompt))
+    out <- paste0(prompt, out)
   }
   
   out <- paste0(out, suffix)
@@ -72,9 +71,8 @@ get_caracas_out <- function(x,
 #' Print symbol
 #' 
 #' @param x A `caracas_symbol`
-#' @param caracas_prefix Print 'caracas' prefix
-#' @param prettyascii `TRUE` to print in pretty ASCII format rather than in utf8
-#' @param ascii `TRUE` to print in ASCII format rather than in utf8
+#' @param prompt Which prompt/prefix to print (default: 'c: ')
+#' @param method What way to print (`utf8`, `prettyascii` or `ascii`)
 #' @param rowvec `FALSE` to print column vectors as is
 #' @param \dots not used
 #'
@@ -82,17 +80,15 @@ get_caracas_out <- function(x,
 #' 
 #' @export
 print.caracas_symbol <- function(x, 
-                                 caracas_prefix = TRUE, 
-                                 prettyascii = getOption("caracas.print.prettyascii", default = FALSE),
-                                 ascii = getOption("caracas.print.ascii", default = FALSE), 
+                                 prompt = getOption("caracas.prompt", default = "c: "), 
+                                 method = getOption("caracas.print.method", default = "utf8"), 
                                  rowvec = getOption("caracas.print.rowvec", 
                                                                default = TRUE),
                                  ...) {
   
   out <- get_caracas_out(x, 
-                         caracas_prefix = caracas_prefix,
-                         prettyascii = prettyascii,
-                         ascii = ascii, 
+                         prompt = prompt,
+                         method = method, 
                          rowvec = rowvec)
   out <- paste0(out, "\n")
   cat(out)
@@ -126,7 +122,7 @@ print.caracas_solve_sys_sol <- function(x,
       nms <- names(x[[i]])
       nms <- sprintf(paste0("%-", max(nchar(nms)), "s"), nms)
       
-      vals <- lapply(x[[i]], get_caracas_out, caracas_prefix = FALSE, ...)
+      vals <- lapply(x[[i]], get_caracas_out, prompt = "", ...)
       
       prefix <- "  "
       nms <- paste0(prefix, nms, " = ")
@@ -155,25 +151,92 @@ print.caracas_solve_sys_sol <- function(x,
 }
 
 
+#' Print factor list
+#' 
+#' @param x A `caracas_factor_list`
+#' @param \dots Passed to [print.caracas_symbol()]
+#'
+#' @concept output
+#' 
+#' @export
+print.caracas_factor_list <- function(x, ...) {
+  ensure_sympy()
+  
+  z <- lapply(x, function(y) {
+    paste0("UnevaluatedExpr(", as.character(y), ")")
+  })
+  
+  w <- paste0(z, collapse = "*")
+  
+  v <- eval_to_symbol(w)
+  print(v)
+  
+  return(invisible(v))
+}
+
+#' Print factor list
+#'
+#' @param x factor list
+#' @param \dots Other arguments passed along
+#' @concept output
+#' @export
+tex.caracas_factor_list <- function(x, ...){
+  a <- unlist(lapply(x, tex, ...))
+  o <- paste(a, collapse = "  ")
+  o
+}
+
 
 #' Export object to TeX
 #'
 #' @param x A `caracas_symbol`
+#' @param zero_as_dot Print zero as dots
+#' @param matstr Replace `\begin{matrix}` with another environment, e.g. `pmatrix`. 
+#' If vector of length two, the second element is an optional argument.
+#' @param \dots Other arguments passed along
 #'
 #' @concept output
+#' 
+#' @examples
+#' if (has_sympy()) {
+#' S <- matrix_sym_symmetric(3, "s")
+#' S[1, 2] <- "1-x"
+#' S
+#' tex(S)
+#' tex(S, matstr = "pmatrix")
+#' tex(S, matstr = c("pmatrix", "r"))
+#' }
 #'
 #' @export
-tex <- function(x) {
+tex <- function(x, zero_as_dot = FALSE, matstr = NULL, ...) {
   UseMethod("tex")
 }
 
+
 #' @export
-tex.caracas_symbol <- function(x) {
+tex.caracas_symbol <- function(x, zero_as_dot = FALSE, matstr = NULL, ...) {
   ensure_sympy()
   
   if (!is.null(x$pyobj)) {
-     return(get_sympy()$latex(x$pyobj))
+    o <- get_sympy()$latex(x$pyobj)
+    
+    if (zero_as_dot) {
+      # Matrices
+      o <- gsub("([^0-9])0([^0-9])", "\\1.\\2", o)
+      # FIXME:
+      # Replaces e0 in matrix
+    }
+    
+    if (!is.null(matstr) && is.character(matstr) && length(matstr) >= 1L) { 
+      opt <- ifelse(length(matstr) == 2L, paste0("[", matstr[2L], "]"), "")
+
+      o <- gsub("\\begin{matrix}", paste0("\\begin{", matstr[1L], "}", opt), o, fixed = TRUE)
+      o <- gsub("\\end{matrix}", paste0("\\end{", matstr[1L], "}"), o, fixed = TRUE)
+    }
+    
+    return(o)
   }
+  
   # if (!is.null(x$pyobj)) {
   #   py <- get_py()
   #   o <- reticulate::py_capture_output(py$print_caracas_latex(x$pyobj))
@@ -196,4 +259,67 @@ as.character.caracas_symbol <- function(x, replace_I = TRUE, ...) {
   y <- as.character(x$pyobj)
   y <- python_strings_to_r(y, replace_I = replace_I)
   return(y)
+}
+
+
+#' Dump latex representation of sympy object.
+#'
+#' Dump latex representation of sympy object and compile document into pdf.
+#'
+#' @param x An object that can be put in latex format with caracas' tex() 
+#'          function or a character string with tex code (in math mode).
+#' @return Nothing, but a .tex file and a .pdf file is generated.
+#' 
+#' @examples
+#' if (has_sympy()) {
+#' S <- matrix_sym_symmetric(3, "s")
+#' S
+#' \dontrun{
+#' texshow(S)
+#' texshow(paste0("S = ", tex(S)))
+#' }
+#' }
+#' 
+#' @concept output
+#' 
+#' @export
+texshow <- function(x){#, name="obj"){
+  if (!requireNamespace("tinytex", quietly = TRUE) ||
+      !requireNamespace("magick", quietly = TRUE) ||
+      !requireNamespace("pdftools", quietly = TRUE) ||
+      !requireNamespace("qpdf", quietly = TRUE)) {
+    stop("This function requires tinytex, magick, and pdftools packages")
+  }
+  
+  tex_name <- paste0(tempfile(), ".tex") #paste0("_dump_", name, ".tex", collapes="")    
+  s1 <- c("\\documentclass{article}",
+          "\\pagestyle{empty}",
+          "\\usepackage{amsmath}", 
+          "\\begin{document}",
+          "\\["
+  )
+  
+  s2 <- c("\\]",
+          "\\end{document}")
+  
+  s1 <- paste0(s1, "\n")
+  s2 <- paste0(s2, "\n")
+  
+  st <- if (inherits(x, "caracas_symbol")) {
+    tex(x)
+  } else {
+    x
+  }
+  
+  st_all <- paste0(c(s1, st, s2), collapse = " ")
+  
+  cat(st_all, file = tex_name)
+
+  out <- tinytex::pdflatex(tex_name)
+
+  im <- magick::image_read_pdf(out)
+  im_content <- magick::image_trim(im)
+  plot(im_content)
+  
+  return(invisible(NULL))
 }

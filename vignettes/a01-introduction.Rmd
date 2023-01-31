@@ -1,0 +1,77 @@
+---
+title: "01 - Introduction to 'caracas'"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{01 - Introduction to 'caracas'}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, message=FALSE}
+library(caracas)
+```
+
+```{r, include = FALSE}
+inline_code <- function(x) {
+  x
+}
+
+if (!has_sympy()) {
+  # SymPy not available, so the chunks shall not be evaluated
+  knitr::opts_chunk$set(eval = FALSE)
+  
+  inline_code <- function(x) {
+    deparse(substitute(x))
+  }
+}
+```
+
+## Quick start
+
+```{r}
+x <- symbol('x')
+eq <- 2*x^2 - x
+eq
+as.character(eq)
+as_expr(eq)
+tex(eq)
+```
+
+$$`r inline_code(tex(eq))`$$
+
+```{r}
+solve_sys(eq, x)
+der(eq, x)
+subs(eq, x, "y")
+```
+
+## Linear algebra
+
+```{r}
+A <- matrix(c("x", 2, 0, "2*x"), 2, 2)
+B <- as_sym(A)
+B
+Binv <- inv(B) # or solve_lin(B)
+Binv
+tex(Binv)
+```
+
+$$`r inline_code(tex(Binv))`$$
+
+```{r}
+eigenval(Binv)
+eigenvec(Binv)
+```
+
+
+## More examples
+
+Please find more examples in the other vignettes.
+

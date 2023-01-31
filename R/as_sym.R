@@ -38,7 +38,32 @@ as_py_string <- function(x) {
   return(hlp_to_py_vec(x))
 }
 
-#' Convert object to symbol
+get_reserved_names <- function() {
+  c("S", "sqrt", "log", "I", "exp", "sin", "cos", "Matrix", "Function")
+}
+
+extract_vars <- function(x) {
+  varnames_exclude <- get_reserved_names()
+  
+  xele <- as.vector(x)
+  m <- gregexpr(pattern = PATTERN_PYHTON_VARIABLE, 
+                text = xele)
+  varnames <- regmatches(x = xele, m = m, invert = FALSE)
+  varnames <- unique(unlist(varnames[unlist(lapply(varnames, length)) > 0]))
+  varnames <- setdiff(varnames, varnames_exclude)
+  varnames
+}
+
+declare_symbols_worker <- function(varnames) {
+  for (varname in varnames) {
+    cmd <- paste0(varname, " = symbols('", varname, "')")
+    reticulate::py_run_string(cmd, convert = FALSE)
+  }
+  
+  return(invisible(varnames))
+}
+
+#' Convert R object to caracas symbol
 #' 
 #' Variables are detected as a
 #' character followed by a number of either: 
@@ -60,7 +85,7 @@ as_py_string <- function(x) {
 #'   A
 #'   B <- as_sym(A)
 #'   B
-#'   2*B
+#'   2 * B
 #'   dim(B)
 #'   sqrt(B)
 #'   D <- as_sym("[[1, 4, 5], [-5, 8, 9]]")
@@ -73,38 +98,40 @@ as_py_string <- function(x) {
 as_sym <- function(x, 
                    declare_symbols = TRUE) {
   ensure_sympy()
+
+  if (is_sym(x)){ 
+      return(x)
+  }
   
   if (is.expression(x)) {
     x <- as.character(x)
   }
   
-  varnames_exclude <- c("S", "sqrt", "log", "I", "exp", "sin", "cos", "Matrix", "Function")
-
   if (declare_symbols) {
-    xele <- as.vector(x)
-    m <- gregexpr(pattern = PATTERN_PYHTON_VARIABLE, 
-                  text = xele)
-    varnames <- regmatches(x = xele, m = m, invert = FALSE)
-    varnames <- unique(unlist(varnames[unlist(lapply(varnames, length)) > 0]))
-    varnames <- setdiff(varnames, varnames_exclude)
-    #varnames
-    
-    for (varname in varnames) {
-      cmd <- paste0(varname, " = symbols('", varname, "')")
-      reticulate::py_run_string(cmd, convert = FALSE)
-    }
+    varnames <- extract_vars(x)
+    declare_symbols_worker(varnames)
   }
-  
+
   # Defining a matrix by hand with '[[1], [2]]' syntax
   if (is.character(x) && length(x) == 1L && grepl("^\\[\\[", x)) {
-    x <- paste0("Matrix(", r_strings_to_python(x), ")")
-    y <- eval_to_symbol(x)
-    return(y)    
+      ## cat("Create matrix\n")
+      x <- paste0("Matrix(", r_strings_to_python(x), ")")
+      y <- eval_to_symbol(x)
+      return(y)    
   } 
   
   # else 
   cmd <- as_py_string(x)
   y <- eval_to_symbol(cmd)
-  
   return(y)
+}
+
+
+
+#' Is object a caracas symbol
+#' @param x object
+#' @concept caracas_symbol
+#' @export
+is_sym <- function(x){
+    inherits(x, "caracas_symbol")
 }

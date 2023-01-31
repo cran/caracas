@@ -185,9 +185,19 @@ finalise_rref <- function(vals) {
 #'   eigenval(A)
 #'   eigenvec(A)
 #'   inv(A)
+#'   inv2fl(A)
 #'   det(A)
 #'   
-#'   
+#'   ## Matrix inversion:
+#'   d <- 3
+#'   m <- matrix_sym(d, d)
+#'   print(system.time(inv(m)))       ## Gauss elimination
+#'   print(system.time(inv(m, method="cf")))     ## Cofactor 
+#'   print(system.time(inv(m, method="lu")))     ## LU decomposition
+#'   if (requireNamespace("Ryacas")){
+#'     print(system.time(inv(m, method="yac")))  ## Use Ryacas
+#'   }
+#' 
 #'   A <- matrix(c("a", "b", "c", "d"), 2, 2) %>% as_sym()
 #'   evec <- eigenvec(A)
 #'   evec
@@ -199,6 +209,8 @@ finalise_rref <- function(vals) {
 #'
 #'   A <- as_sym("[[1, 2, 3], [4, 5, 6]]")
 #'   pinv(A)
+#'
+#' 
 #' }
 #' 
 #' @return Returns the requested property of a matrix.
@@ -234,9 +246,62 @@ singular_values <- function(x) {
 
 
 #' @rdname linalg
+#' @param method The default works by $LU$ decomposition. 
+#' The alternatives are Gaussian elimination (`gauss`), 
+#' the cofactor method (`cf`), 
+#' and `Ryacas` (`yac`).
 #' @export
-inv <- function(x) {
-    return(do_la(x, "inv"))
+inv <- function(x, method = c("lu", "gauss", "cf", "yac")) {
+  method <- match.arg(method)
+  
+  stopifnot_symbol(x)
+  stopifnot(symbol_is_matrix(x))
+  
+  ## if (FALSE) {
+    ## microbenchmark::microbenchmark(
+      ## inv(A, "lu"),
+      ## inv(A, "gauss"),
+      ## inv(A, "cf"),
+      ## inv(A, "yac"),
+      ## times = 10
+    ## )
+  ## }
+  
+  switch(method,
+         lu = inv_lu(x),
+         gauss = do_la(x, "inv"),
+         cf = inv_cf(x),
+         yac = inv_yac(x))
+}
+
+inv_cf <- function(x){
+    return(t(sympy_func(x, "cofactor_matrix")) / det(x))
+}
+
+inv_lu <- function(x){
+    construct_symbol_from_pyobj(x$pyobj$inv(method="LU"))
+}
+
+inv_yac <- function(x){
+    if (!requireNamespace("Ryacas", quietly = TRUE)) {
+      stop("This method requires Ryacas - please install.packages('Ryacas')")
+    }
+
+    A_ <- as_character_matrix(x)
+    Ay <- Ryacas::as_y(A_)
+    Ai <- Ay %>% Ryacas::y_fn("Inverse") %>% Ryacas::yac_str()
+    B <- as_sym(Ryacas::as_r(Ai))
+    return(B)
+}
+
+
+
+#' @rdname linalg
+#' @export
+inv2fl <- function(x){
+  xi <- inv(x)
+  d <- denominator(xi[1,1])
+  as_factor_list(1/d, d * xi)
 }
 
 #' @rdname linalg
@@ -276,7 +341,6 @@ rref <- function(x) {
 QRdecomposition <- function(x) {
     return(do_la(x, "QR"))
 }
-
 
 
 #' @rdname linalg

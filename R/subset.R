@@ -88,6 +88,7 @@ convert_to_r_mat <- function(x) {
 #'   A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
 #'   B <- as_sym(A)
 #'   B[, 2] <- "x"
+#'   B[, 3] <- vector_sym(3)
 #'   B
 #' }
 #' 
@@ -101,18 +102,27 @@ convert_to_r_mat <- function(x) {
     stop(paste0("'x' ", TXT_NOT_CARACAS_SYMBOL))
   }
 
+  
   if (!symbol_is_matrix(x)) {
     stop("'x' must be a matrix")
   }
   
   xmat <- convert_to_r_mat(x)
+
+  if (inherits(value, "caracas_symbol")){
+    if (symbol_is_matrix(value)) {
+      value <- convert_to_r_mat(value)
+    } else {
+      value <- as.character(value)
+    }
+  }
   
   xmat_mod <- if (missing(j)) {
     base::`[<-`(xmat, i, ..., value = value)
   } else {
     base::`[<-`(xmat, i, j, ..., value = value)
   }
-  
+
   y <- as_sym(xmat_mod)
   return(y)
 }

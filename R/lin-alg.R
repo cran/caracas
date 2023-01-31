@@ -17,25 +17,48 @@ stopifnot_matrix <- function(x){
   }
 }
 
+#' Check if object is a caracas matrix
+#'
+#' Check if object is a caracas matrix
+#'
+#' @param x An object
+#'
+#' @examples
+#' 
+#' if (has_sympy() && sympy_version() >= "1.6") {
+#'   x <- vector_sym(4)
+#'   symbol_is_matrix(x)   ## TRUE
+#'   x2 <- as.character(x) ## "Matrix([[v1], [v2], [v3], [v4]])"
+#'   symbol_is_matrix(x2)  ## TRUE
+#'   x3 <- as_character_matrix(x) ## R matrix
+#'   symbol_is_matrix(x3)  ## FALSE 
+#' }
+#' 
+#' @concept linalg
+#' @export
 symbol_is_matrix <- function(x) {
-  # MatrixSymbol
-  try({
-    res <- x$pyobj$is_MatrixExpr
+    if (length(x) != 1L){
+      return(FALSE)
+    }
+  
+    ## MatrixSymbol
+    try({
+        res <- x$pyobj$is_MatrixExpr
+        
+        if (is.logical(res) && isTRUE(res)) {
+            return(TRUE)
+        }
+        
+        if (reticulate::py_to_r(res)) {
+            return(TRUE)
+        }
+    }, silent = TRUE)
     
-    if (is.logical(res) && isTRUE(res)) {
+    xstr <- as.character(x)
+
+    if (grepl("^Matrix\\(\\[", xstr)) {
       return(TRUE)
     }
-    
-    if (reticulate::py_to_r(res)) {
-      return(TRUE)
-    }
-  }, silent = TRUE)
-  
-  xstr <- as.character(x)
-  
-  if (grepl("^Matrix\\(\\[", xstr)) {
-    return(TRUE)
-  }
   
   # FIXME: From der() and der2()
   # if (grepl("^\\[\\[", xstr)) {
@@ -141,6 +164,7 @@ dim.caracas_symbol <- function(x) {
   ensure_sympy()
   stopifnot_symbol(x)
   
+  # FIXME: This contract is used in dim<- setter
   if (!symbol_is_matrix(x)) { 
     return(NULL) 
   }
@@ -151,7 +175,45 @@ dim.caracas_symbol <- function(x) {
   return(c(rows, cols))
 }
 
-
+#' Dimensions of a caracas symbol
+#' 
+#' @param x caracas symbol
+#' @param value new dimension
+#' 
+#' @examples
+#' if (has_sympy()) {
+#'   v <- vector_sym(4)
+#'   v
+#'   dim(v)
+#'   dim(v) <- c(2, 2)
+#'   v
+#'   m <- matrix_sym(2, 2)
+#'   dim(m)
+#'   dim(m) <- c(4, 1)
+#'   m
+#' }
+#' 
+#' @concept linalg
+#' 
+#' @export
+`dim<-.caracas_symbol` <- function(x, value) {
+  ensure_sympy()
+  stopifnot_symbol(x)
+  
+  if (is.null(dim(x))) {
+    stop("x does not have a dimension to change")
+  }
+  
+  if (prod(dim(x)) != prod(value)) {
+    stop("Wrong number of elements")
+  }
+  
+  # FIXME: Currently works because dim(x) is only non-NULL for matrices
+  m1 <- as_character_matrix(x)
+  dim(m1) <- value
+  m1 <- as_sym(m1)
+  m1
+}
 
 #' Transpose of matrix
 #'
@@ -203,6 +265,8 @@ reciprocal_matrix <- function(x, numerator = 1){
   rx <- apply(as_character_matrix(x), 2, function(xx) {
     paste0("(", numerator, ")", "/(", xx, ")")
   })
+  
+  dim(rx) <- dim(x)
   
   return(as_sym(rx))
 }
@@ -409,18 +473,21 @@ vec <- function(x) {
 #' 
 #' @examples
 #' if (has_sympy()) {
+#'   diag_(c(1,3,5))
 #'   diag_(c("a", "b", "c"))
 #'   diag_("a", 2)
+#'   diag_(vector_sym(4))
 #' }
 #' 
 #' @export
 diag_ <- function(x, n = 1L, declare_symbols = TRUE, ...){
   ensure_sympy()
+
   
-  if (!is.character(x)) {
-    stop("'x' must be a character")
+  if(inherits(x, "caracas_symbol")){
+      x <- as_character_matrix(x)
   }
-  
+
   x <- rep(x, n, ...)
   n <- length(x)
   
@@ -448,8 +515,376 @@ diag_ <- function(x, n = 1L, declare_symbols = TRUE, ...){
 matrix_ <- function(..., declare_symbols = TRUE){
   ensure_sympy()
   
-  A <- matrix(...)
+  args <- list(...)
+  
+  if (length(args) >= 1L & inherits(args[[1L]], "caracas_vector")) {
+    args[[1L]] <- as_character(args[[1L]])
+  }
+  
+  A <- do.call(matrix, args)
+  
+  #A <- matrix(...)
   y <- as_sym(A, declare_symbols = declare_symbols)
   
   return(y)
 }
+
+
+#' Generate generic vectors and matrices
+#'
+#' Generate generic vectors and matrices.
+#'
+#' @name generic-matrices
+#' 
+#' @param n Length of vector
+#' @param entry The symbolic name of each entry.
+#' 
+#' @concept linalg
+#' 
+#' @examples
+#' if (has_sympy()) {
+#'   vector_sym(4, "b")
+#'   matrix_sym(3, 2, "a")
+#'   matrix_sym_diag(4, "s")
+#'   matrix_sym_symmetric(4, "s")
+#' }
+#'
+#' @rdname generic-matrices
+#' @export 
+vector_sym <- function(n, entry = "v"){ 
+  ensure_sympy()
+  
+  as_sym(paste0(entry, seq_len(n)))
+}
+
+#' @rdname generic-matrices
+#' @param nrow,ncol Number of rows and columns
+#' 
+#' @export 
+matrix_sym <- function(nrow, ncol, entry = "v"){
+  ensure_sympy()
+  
+  out <- outer(seq_len(nrow), seq_len(ncol), FUN = function(r, c) paste0(entry, r, c))
+  out <- matrix_(out, nrow = nrow)
+  out
+}
+
+#' @rdname generic-matrices
+#' @export 
+matrix_sym_diag <- function(nrow, entry = "v"){
+  ensure_sympy()
+  
+  out <- diag_(paste0(entry, seq_len(nrow)))
+  out 
+}
+
+#' @rdname generic-matrices
+#' @export 
+matrix_sym_symmetric <- function(nrow, entry = "v"){ 
+  ensure_sympy()
+  
+  out <- matrix(data = "", nrow = nrow, ncol = nrow)
+  for (r in seq_len(nrow)){
+    for (c in seq_len(nrow)){
+      if (r > c) {
+        out[r, c] <- paste0(entry, r, c)
+      } else {
+        out[r, c] <- paste0(entry, c, r)            
+      }
+    }            
+  }
+  out <- matrix_(out, nrow = nrow)
+  out
+}
+
+
+
+#' Column space (range) of a symbolic matrix
+#'
+#' Column space (range) of a symbolic matrix
+#'
+#' @param x Symbolic matrix
+#'
+#' @concept linalg
+#' 
+#' @examples
+#' if (has_sympy()) {
+#'   X1 <- matrix_(paste0("x_",c(1,1,1,1, 2,2,2,2, 3,4,3,4)), nrow = 4)
+#'   X1
+#'   colspan(X1)
+#'   do_la(X1, "columnspace")
+#'   rankMatrix_(X1)
+#'   
+#'   X2 <- matrix_(paste0("x_",c(1,1,1,1, 0,0,2,2, 3,4,3,4)), nrow = 4)
+#'   X2
+#'   colspan(X2)
+#'   do_la(X2, "columnspace")
+#'   rankMatrix_(X2)
+#' }
+#' 
+#' @importFrom stats model.matrix
+#' @export
+colspan <- function(x){
+  ensure_sympy()
+  
+  #rf <- do_la(x, "rref")
+  #x[, rf$pivot_vars]
+  
+  do.call(cbind, do_la(x, "columnspace"))
+  
+  # zz <- as_character_matrix(x)
+  # 
+  # uu <- apply(zz, 2, factor, simplify = FALSE)
+  # 
+  # mm <-
+  #   lapply(seq_along(uu),
+  #          function(i){
+  #            vv <- uu[[i]]
+  #            if (length(levels(vv)) == 1) {
+  #              out <- matrix(rep(1, length(vv)))
+  #            }
+  #            else {
+  #              out <- model.matrix(~ 0 + vv)
+  #            }
+  #            colnames(out) <- levels(uu[[i]])
+  #            out
+  #          })
+  # 
+  # x_mat <- do.call(cbind, mm)
+  # zero <- which(colnames(x_mat) == "0")
+  # if (length(zero) > 0)
+  #     x_mat <- x_mat[, -zero]
+  # x_mat
+}
+
+#' Rank of matrix
+#'
+#' Rank of matrix
+#'
+#' @param x Numeric or symbolic matrix
+#'
+#' @concept linalg
+#' 
+#' @examples
+#' if (has_sympy()) {
+#'   X <- matrix_(paste0("x_",c(1,1,1,1,2,2,2,2,3,4,3,4)), nrow=4)
+#'   X
+#'   rankMatrix_(X)
+#'   colspan(X)
+#' }
+#' 
+#' @importFrom Matrix rankMatrix
+#' @export
+rankMatrix_ <- function(x){
+  ensure_sympy()
+  
+  if (is.numeric(x)){
+    Matrix::rankMatrix(x)
+  }
+  
+  else
+  {
+    #Matrix::rankMatrix(colspan(x))
+    do_la(x, "rank")
+  }
+}
+
+
+
+#' Add prefix to each element of matrix
+#' 
+#' Add prefix to each element of matrix
+#' 
+#' @param x Numeric or symbolic matrix
+#' @param prefix A character vector
+#' @concept linalg
+#' 
+#' @examples
+#' if (has_sympy()) {
+#'   X <- matrix_sym(2, 3)
+#'   X
+#'   add_prefix(X, "e")
+#'   
+#'   X <- matrix(1:6, 3, 2)
+#'   X
+#'   add_prefix(X, "e")
+#' }
+#' 
+#' @export
+add_prefix <- function(x, prefix = "") {
+  ensure_sympy()
+  
+  if (inherits(x, "caracas_symbol")) {
+    x <- as_character_matrix(x)
+  }
+  
+  w <- apply(x, 2, function(y) {
+    paste0(prefix, y)
+  })
+  
+  as_sym(w)
+}
+
+
+
+
+#' Form Row and Column Sums
+#'
+#' Form Row and Column Sums
+#'
+#' @param x Symbolic matrix
+#'
+#' @concept linalg
+#' @name rowSums_colSums
+#' 
+#' @examples
+#' if (has_sympy()) {
+#'   X <- matrix_(paste0("x_",c(1,1,1,1,2,2,2,2,3,4,3,4)), nrow=4)
+#'   rowSums_(X)
+#'   colSums_(X)
+#' }
+#' 
+#' @export
+rowSums_ <- function(x){
+  ensure_sympy()
+  stopifnot_matrix(x)
+  
+  y <- as_sym(rep(1, ncol(x)))
+  
+  x %*% y
+}
+
+#' @rdname rowSums_colSums
+#' @export
+colSums_ <- function(x){
+  ensure_sympy()
+  stopifnot_matrix(x)
+  
+  y <- as_sym(rep(1, nrow(x)))
+  
+  t(y) %*% x
+}
+
+
+
+#' Special matrices: zeros, ones, eyes
+#' @name special_matrices
+#' @param nrow,ncol Number of rows and columns of output
+#' @seealso [diag_()], [matrix_sym()], [vector_sym()]
+#' @examples
+#'
+#' if (has_sympy()){
+#'   zeros(3, 4)
+#'   ones(3, 4)
+#'   eye(3, 4)
+#' }
+#' 
+#' @export
+#' @concept linalg
+#' @rdname special_matrices
+zeros <- function(nrow, ncol){
+  as_sym(matrix(0, nrow=nrow, ncol=ncol))
+}
+
+#' @export
+#' @rdname special_matrices
+ones <- function(nrow, ncol){
+  as_sym(matrix(1, nrow=nrow, ncol=ncol))
+}
+
+#' @export
+#' @rdname special_matrices
+eye <- function(nrow, ncol){
+  if (nrow==ncol)
+    return(diag_(1, nrow))
+  m <- min(nrow, ncol)
+  out <- matrix(0, nrow=nrow, ncol=ncol)
+  d <- diag(1, m)
+  out[1:m, 1:m] <- d
+  as_sym(out)
+}
+
+#' Difference matrix
+#'
+#' @param N Number of rows (and columns)
+#' @param l Value / symbol below main diagonal
+#' @param d Value / symbol on main diagonal
+#'
+#' @examples
+#' if (has_sympy()){
+#'   Dm <- diff_mat(4)
+#'   Dm
+#'   y <- vector_sym(4, "y")
+#'   Dm %*% y
+#' }
+#' @concept linalg
+#' 
+#' @export
+diff_mat <- function(N, l="-1", d=1){
+  L1 <- diag(d, N)
+  L1[cbind(1 + (1:(N-1)), 1:(N-1))] <- l
+  L1 <- as_sym(L1)
+  L1
+}
+
+
+
+#' Matrix cross product
+#'
+#' @name matrix_cross_product
+#' @param x,y caracas matrices
+#' @concept linalg
+#' 
+#' @export
+#' @rdname matrix_cross_product
+crossprod_ <- function(x, y=NULL){
+  if (is.null(y)){
+    t(x) %*% x        
+  } else {
+    t(x) %*% y
+  }
+}
+
+#' @export
+#' @rdname matrix_cross_product
+tcrossprod_ <- function(x, y=NULL){
+  if (is.null(y)){
+    x %*% t(x) 
+  } else {
+    x %*% t(y) 
+  }
+}
+
+
+#' Get basis
+#'
+#' Get basis
+#'
+#' @param x caracas vector / matrix
+#' @examples
+#' if (has_sympy()) {
+#'   x <- vector_sym(3)
+#'   get_basis(x)
+#' 
+#'   W <- matrix(c("r_1", "r_1", "r_2", "r_2", "0", "0", "u_1", "u_2"), nrow=4)
+#'   W <- as_sym(W)
+#'   get_basis(W)
+#' }
+#' @concept linalg
+#' @export
+get_basis <- function(x){
+  ensure_sympy()
+  stopifnot_symbol(x)
+  
+  zz <- as_character_matrix(x)
+  ##unique symbols
+  us <- setdiff(unique(as.character(zz)), "0")
+  out <- lapply(seq_along(us),
+                function(i){
+                  1*(us[i] == zz)           
+                })
+  names(out) <- us
+  ## attr(out, "symbols") <- us
+  out
+}
+

@@ -7,6 +7,7 @@
 \alias{rowspace}
 \alias{singular_values}
 \alias{inv}
+\alias{inv2fl}
 \alias{eigenval}
 \alias{eigenvec}
 \alias{GramSchmidt}
@@ -24,7 +25,9 @@ rowspace(x)
 
 singular_values(x)
 
-inv(x)
+inv(x, method = c("lu", "gauss", "cf", "yac"))
+
+inv2fl(x)
 
 eigenval(x)
 
@@ -43,6 +46,11 @@ det(x, ...)
 \arguments{
 \item{x}{A matrix for which a property is requested}
 
+\item{method}{The default works by $LU$ decomposition.
+The alternatives are Gaussian elimination (\code{gauss}),
+the cofactor method (\code{cf}),
+and \code{Ryacas} (\code{yac}).}
+
 \item{...}{Auxillary arguments}
 }
 \value{
@@ -60,9 +68,19 @@ if (has_sympy()) {
   eigenval(A)
   eigenvec(A)
   inv(A)
+  inv2fl(A)
   det(A)
   
-  
+  ## Matrix inversion:
+  d <- 3
+  m <- matrix_sym(d, d)
+  print(system.time(inv(m)))       ## Gauss elimination
+  print(system.time(inv(m, method="cf")))     ## Cofactor 
+  print(system.time(inv(m, method="lu")))     ## LU decomposition
+  if (requireNamespace("Ryacas")){
+    print(system.time(inv(m, method="yac")))  ## Use Ryacas
+  }
+
   A <- matrix(c("a", "b", "c", "d"), 2, 2) \%>\% as_sym()
   evec <- eigenvec(A)
   evec
@@ -74,6 +92,8 @@ if (has_sympy()) {
 
   A <- as_sym("[[1, 2, 3], [4, 5, 6]]")
   pinv(A)
+
+
 }
 
 }

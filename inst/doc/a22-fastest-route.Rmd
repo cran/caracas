@@ -1,0 +1,230 @@
+---
+title: "22 - Fastest route through the forest"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{22 - Fastest route through the forest}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, message=FALSE}
+library(caracas)
+```
+
+```{r, include = FALSE}
+inline_code <- function(x) {
+  x
+}
+
+if (!has_sympy()) {
+  # SymPy not available, so the chunks shall not be evaluated
+  knitr::opts_chunk$set(eval = FALSE)
+  
+  inline_code <- function(x) {
+    deparse(substitute(x))
+  }
+}
+```
+
+A [problem](https://ing.dk/artikel/taenkeboks-hurtigste-vej-mellem-a-b-1150-m-lang-232871) was posted by the Danish newspaper, *Ingeniøren*, and it goes like this:
+
+You are in the middle of a dense forest located at $A$. 
+You need to get to $C$ in the fastest way possible, and you can only change direction once. 
+You can walk directly via $AB$ to the dedicated walking path $BC$ where you can walk fast, 
+you can take the direct path through the forest ($AC$) where you have to walk slower, 
+or cross through the forest to the dedicated walking path ($AD$ and then $DC$).
+
+```{r, echo = FALSE, fig.width=8, fig.height=5}
+old_mar <- par("mar")
+par(mar = c(0, 0, 0, 0))
+A <- 300
+kat <- sqrt(1000^2 - A^2)
+
+pA <- c(0, A)
+pB <- c(0, 0)
+pC <- c(kat, 0)
+
+D <- 400
+pD <- c(D, 0)
+
+pad <- 40
+plot(0, type = 'n', axes = FALSE, ann = FALSE, 
+     xlim = c(-pad, 1000+pad), 
+     ylim = c(-pad, A+pad))
+
+polygon(c(pA[1]-pad, pB[1]-pad, pC[1]+pad, pC[1]+pad), 
+        c(pA[2]+pad, pB[2]-pad, pC[2]-pad, pA[2]+pad), border = NA, col = "green")
+
+points(pA[1], pA[2], type = "p"); text(pA[1], pA[2], labels = "A", pos = 2)
+points(pB[1], pB[2], type = "p"); text(pB[1], pB[2], labels = "B", pos = 2)
+points(pC[1], pC[2], type = "p"); text(pC[1], pC[2], labels = "C", pos = 4)
+points(pD[1], pD[2], type = "p"); text(pD[1], pD[2], labels = "D", pos = 1)
+
+lines(c(pA[1], pB[1]), c(pA[2], pB[2]), type = "l", col = "black", lty = 2)
+lines(c(pA[1], pC[1]), c(pA[2], pC[2]), type = "l", col = "black", lty = 2)
+lines(c(pB[1], pC[1]), c(pB[2], pC[2]), type = "l", col = "black", lwd = 3)
+lines(c(pA[1], pD[1]), c(pA[2], pD[2]), type = "l", col = "black", lty = 2)
+
+legend(1000-200, A, 
+       legend = c("5 m/s", "2 m/s"), 
+       lty = c(1, 2), 
+       lwd = c(3, 1))
+text(-pad/3, A/2, labels = "|AB| = 300 m", pos = 3, srt = 90)
+text(kat/2, A/1.7, labels = "|AC| = 1,000 m", pos = 3)
+
+par(mar = old_mar)
+```
+
+## Information given
+
+* Distances
+  * $|AB| =$ 300 m
+  * $|AC| =$ 1,000 m
+* Velocities
+  * $v_{AB} = 2$ m/s
+  * $v_{AD} = 2$ m/s
+  * $v_{AC} = 2$ m/s
+  * $v_{BC} = 5$ m/s
+
+### Length of line segments
+
+We parameterise with $k = |BD|$, the distance between $B$ and $D$. 
+That is, how much to walk on fast walking path before crossing into 
+the forest.
+
+Formulating using `caracas`:
+
+```{r}
+AB <- as_sym('300')
+AB
+AC <- as_sym('1000')
+AC
+BC <- sqrt(AC^2 - AB^2)
+BC
+k <- symbol('k') # |BD|
+DC <- BC - k
+AD <- sqrt(AB^2 + k^2)
+AD
+```
+
+So for a distance of $|AD|$, you travel by 5 m/s, and then for a distance of 
+$`r inline_code(tex(DC))`$ you travel by 2 m/s. 
+Thus it takes $`r inline_code(tex(AD/2))`$ to travel $AD$ and $`r inline_code(tex(DC/5))`$ to travel $DC$.
+
+The question is: What is the fastest way to get from $A$ to $C$?
+
+First, the total duration of the route is:
+
+```{r}
+l <- AD/2 + DC/5
+l
+```
+
+```{r, fig.width=7, fig.height=5}
+lfun <- as_expr(l)
+lfun
+ks <- seq(0, as_expr(AC), length.out = 100)
+ls <- eval(lfun, list(k = ks))
+plot(ks, ls, type = "l", xlab = "k", ylab = "Time A to C")
+```
+
+It looks like a minimum around $k = 150$.
+
+We find the analytical solution by first finding critical points:
+
+```{r}
+dl <- der(l, k)
+dl
+crit_points <- solve_sys(dl, k)
+crit_points
+best_k <- crit_points[[1]]$k
+best_k
+```
+
+The type of the critical point is found by considering the Hessian:
+
+```{r}
+eval(as_expr(der(dl, k)), list(k = as_expr(best_k)))
+```
+
+Thus the critical point is indeed a minimum as suggested by the plot.
+
+The fastest route is thus obtained for 
+\[
+  k = `r inline_code(tex(best_k))` \approx `r inline_code(round(as_expr(best_k), 2))` .
+\]
+It has a length of (in meters)
+```{r}
+DC_best <- BC - best_k
+AD_best <- sqrt(AB^2 + best_k^2)
+AD_best
+best_route <- AD_best + DC_best
+best_route
+as_expr(best_route)
+```
+\[
+  `r inline_code(tex(best_route))` \approx `r inline_code(round(as_expr(best_route), 2))`
+\]
+and takes (in seconds)
+```{r}
+best_l <- subs(l, "k", best_k)
+best_l
+as_expr(best_l)
+```
+\[
+  `r inline_code(tex(best_l))` \approx `r inline_code(round(as_expr(best_l), 2))`
+\]
+
+The best route can be illustrated, too:
+
+
+```{r, echo = FALSE, fig.width=8, fig.height=5}
+old_mar <- par("mar")
+par(mar = c(0, 0, 0, 0))
+A <- 300
+kat <- sqrt(1000^2 - A^2)
+
+pA <- c(0, A)
+pB <- c(0, 0)
+pC <- c(kat, 0)
+
+D <- as_expr(best_k)
+pD <- c(D, 0)
+
+pad <- 40
+plot(0, type = 'n', axes = FALSE, ann = FALSE, 
+     xlim = c(-pad, 1000+pad), 
+     ylim = c(-pad, A+pad))
+
+polygon(c(pA[1]-pad, pB[1]-pad, pC[1]+pad, pC[1]+pad), 
+        c(pA[2]+pad, pB[2]-pad, pC[2]-pad, pA[2]+pad), border = NA, col = "green")
+
+points(pA[1], pA[2], type = "p"); text(pA[1], pA[2], labels = "A", pos = 2)
+points(pB[1], pB[2], type = "p"); text(pB[1], pB[2], labels = "B", pos = 2)
+points(pC[1], pC[2], type = "p"); text(pC[1], pC[2], labels = "C", pos = 4)
+points(pD[1], pD[2], type = "p"); text(pD[1], pD[2], labels = "D", pos = 1)
+
+lines(c(pA[1], pB[1]), c(pA[2], pB[2]), type = "l", col = "black", lty = 2)
+lines(c(pA[1], pC[1]), c(pA[2], pC[2]), type = "l", col = "black", lty = 2)
+lines(c(pB[1], pC[1]), c(pB[2], pC[2]), type = "l", col = "black", lwd = 3)
+lines(c(pA[1], pD[1]), c(pA[2], pD[2]), type = "l", col = "black", lty = 2)
+
+lines(c(pA[1], pD[1]), c(pA[2], pD[2]), type = "l", col = "red", lwd = 2.5)
+lines(c(pD[1], pC[1]), c(pD[2], pC[2]), type = "l", col = "red", lwd = 2.5)
+
+legend(1000-200, A, 
+       legend = c("5 m/s", "2 m/s"), 
+       lty = c(1, 2), 
+       lwd = c(3, 1))
+text(-pad/3, A/2, labels = "|AB| = 300 m", pos = 3, srt = 90)
+text(kat/2, A/1.7, labels = "|AC| = 1,000 m", pos = 3)
+
+par(mar = old_mar)
+```

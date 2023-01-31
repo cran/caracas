@@ -4,12 +4,30 @@
 \alias{tex}
 \title{Export object to TeX}
 \usage{
-tex(x)
+tex(x, zero_as_dot = FALSE, matstr = NULL, ...)
 }
 \arguments{
 \item{x}{A \code{caracas_symbol}}
+
+\item{zero_as_dot}{Print zero as dots}
+
+\item{matstr}{Replace \verb{\\begin\{matrix\}} with another environment, e.g. \code{pmatrix}.
+If vector of length two, the second element is an optional argument.}
+
+\item{\dots}{Other arguments passed along}
 }
 \description{
 Export object to TeX
+}
+\examples{
+if (has_sympy()) {
+S <- matrix_sym_symmetric(3, "s")
+S[1, 2] <- "1-x"
+S
+tex(S)
+tex(S, matstr = "pmatrix")
+tex(S, matstr = c("pmatrix", "r"))
+}
+
 }
 \concept{output}

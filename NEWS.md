@@ -1,3 +1,25 @@
+# caracas 2.0.0
+
+* Reworked `subs()` - see documentation. `subs_lst()` removed.
+* Reworked output format (`utf8`, `prettyascii` or `ascii`) to one argument and one option, i.e. 
+  `options(caracas.print.method = 'prettyascii')` and `print(x, method = "prettyascii")` (default is `utf8`)
+* New function: `as_func()`
+* `dim()<-` assignment for `caracas` matrices
+
+# caracas 1.1.3
+
+* Imports the Matrix package instead of only suggesting
+* New functions: `vector_sym()`, `matrix_sym()`, `matrix_sym_diag()`, `matrix_sym_symmetric()`
+* New function: `colspan()` (Column space (range) of a symbolic matrix)
+* New function: `get_basis()` Get basis for symbolic matrix / vector.
+* New function: `all_vars` Get all symbols in caracas symbol.
+* `matrify()` now works on atomic elements.
+* New function: `def_sym_vec()` defines symbol for each element in a character vector.
+* New function: `jacobian()` function added. 
+* New functions: `zeros()`, `ones()`, `eye()` added.
+* New function: `diff_mat()` added.
+* New functions: `crossprod_()`, `tcrossprod_()` added.
+
 # caracas 1.1.2
 
 * `sympy_func(x, fun)` first tries calling `fun` on `x`; and if it does not exist it tries from the global namespace

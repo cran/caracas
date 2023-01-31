@@ -6,9 +6,8 @@
 \usage{
 \method{print}{caracas_symbol}(
   x,
-  caracas_prefix = TRUE,
-  prettyascii = getOption("caracas.print.prettyascii", default = FALSE),
-  ascii = getOption("caracas.print.ascii", default = FALSE),
+  prompt = getOption("caracas.prompt", default = "c: "),
+  method = getOption("caracas.print.method", default = "utf8"),
   rowvec = getOption("caracas.print.rowvec", default = TRUE),
   ...
 )
@@ -16,11 +15,9 @@
 \arguments{
 \item{x}{A \code{caracas_symbol}}
 
-\item{caracas_prefix}{Print 'caracas' prefix}
+\item{prompt}{Which prompt/prefix to print (default: 'c: ')}
 
-\item{prettyascii}{\code{TRUE} to print in pretty ASCII format rather than in utf8}
-
-\item{ascii}{\code{TRUE} to print in ASCII format rather than in utf8}
+\item{method}{What way to print (\code{utf8}, \code{prettyascii} or \code{ascii})}
 
 \item{rowvec}{\code{FALSE} to print column vectors as is}
 

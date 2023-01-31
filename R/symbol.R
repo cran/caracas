@@ -47,11 +47,13 @@ construct_symbol_from_pyobj <- function(pyobj) {
 eval_to_symbol <- function(x) {
   ensure_sympy()
   
-  # https://docs.sympy.org/latest/gotchas.html#python-numbers-vs-sympy-numbers
+  # --------------------------------------------
   # 1/3 should be caught
+  # --------------------------------------------
+  # https://docs.sympy.org/latest/gotchas.html#python-numbers-vs-sympy-numbers
   # y1/3 should not be caught
   if (grepl("[0-9-.]+/[0-9-.]+", x, perl = TRUE)) {
-    # Not there is a fraction that looks like '1/3'; 
+    # Now there is a fraction that looks like '1/3'; 
     # we need to be sure that there are no characters in front of the 
     # number in the numerator
     
@@ -61,6 +63,17 @@ eval_to_symbol <- function(x) {
       # S(): Sympify
       x <- gsub("([0-9-.]+)/([0-9-.]+)", "S(\\1)/S(\\2)", x, perl = TRUE)
     }
+  }
+  
+  # --------------------------------------------
+  # (1)/(3) should be caught  
+  # --------------------------------------------
+  # https://docs.sympy.org/latest/gotchas.html#python-numbers-vs-sympy-numbers
+  if (grepl("\\([0-9-.]+\\) */ *\\([0-9-.]+\\)", x, perl = TRUE)) {
+    # Now there is a fraction that looks like '(1)/(3)'; 
+    # S(): Sympify
+    # This gives S(1)/S(2), okay with no extra parentheses 
+    x <- gsub("\\(([0-9-.]+)\\) */ *\\(([0-9-.]+)\\)", "S(\\1)/S(\\2)", x, perl = TRUE)
   }
   
   x <- r_strings_to_python(x)
@@ -122,13 +135,7 @@ symbol <- function(x, ...) {
   return(y)
 }
 
-is_atomic <- function(x) {
-  xstr <- as.character(x)
-  
-  pattern <- paste0("^", PATTERN_PYHTON_VARIABLE, "$")
-  
-  return(grepl(pattern, x))
-}
+
 
 #' Perform calculations setup previously
 #'
@@ -175,39 +182,7 @@ try_doit <- function(x) {
 
 
 
-#' Creates matrix from array symbol
-#' 
-#' @param x Array symbol to convert to matrix
-#' 
-#' @examples 
-#' if (has_sympy()) {
-#'   x <- symbol("x")
-#'   y <- symbol("y")
-#'   f <- 3*x^2 + x*y^2
-#'   h <- der2(f, list(x, y))
-#'   h
-#'   dim(h)
-#'   H <- matrify(h)
-#'   H
-#'   dim(H)
-#' }
-#' 
-#' @concept caracas_symbol
-#' 
-#' @export
-matrify <- function(x) {
-  z <- paste0("Matrix(", paste0(x, collapse = ", "), ")")
-  y <- eval_to_symbol(z)
-  return(y)
-}
 
-# Creates symbol vector from list of caracas symbols
-vectorfy <- function(x) {
-  z <- paste0(unlist(lapply(x, as.character)), collapse = ", ")
-  z <- paste0("[", z, "]")
-  y <- eval_to_symbol(z)
-  return(y)
-}
 
 
 #' Remove inner-most dimension
@@ -252,50 +227,8 @@ extract_elements <- function(x) {
   return(zz)
 }
 
-#' Convert object to tuple
-#' 
-#' @param x Object
-#' 
-#' @examples 
-#' if (has_sympy()) {
-#'   x <- as_sym("Matrix([[b1*x1/(b2 + x1)], [b1*x2/(b2 + x2)], [b1*x3/(b2 + x3)]])")
-#'   tuplify(x)
-#' }
-#' 
-#' @concept caracas_symbol
-#' 
-#' @export
-tuplify <- function(x) {
-  zz <- extract_elements(x)
-  zz <- paste0("(", zz, ")")
-  
-  y <- eval_to_symbol(zz)
-  return(y)
-}
 
-#' Convert object to list of elements
-#' 
-#' @param x Object
-#' 
-#' @examples 
-#' if (has_sympy()) {
-#'   x <- as_sym("Matrix([[b1*x1/(b2 + x1)], [b1*x2/(b2 + x2)], [b1*x3/(b2 + x3)]])")
-#'   listify(x)
-#'   
-#'   xT <- t(x)
-#'   listify(xT)
-#' }
-#' 
-#' @concept caracas_symbol
-#' 
-#' @export
-listify <- function(x) {
-  zz <- convert_to_r_mat(x)
-  dim(zz) <- NULL
-  zz <- as.list(zz)
-  zz <- lapply(zz, as_sym, declare_symbols = FALSE)
-  return(zz)
-}
+## concatenate
 
 #' @export
 c.caracas_symbol <- function(...) {
@@ -314,144 +247,11 @@ c.caracas_symbol <- function(...) {
 }
 
 
-#' Substitute symbol for value
-#' 
-#' @param s Expression
-#' @param x Name of symbol (character)
-#' @param v Value for `x`
-#' 
-#' @examples 
-#' if (has_sympy()) {
-#'    x <- symbol('x')
-#'    e <- 2*x^2
-#'    e
-#'    subs(e, "x", "2")
-#'    y <- as_sym("2")
-#'    subs(e, "x", y)
-#' }
-#' 
-#' @seealso [subs_vec()], [subs_lst()]
-#' 
-#' @concept caracas_symbol
-#' 
-#' @export
-subs <- function(s, x, v) {
-  ensure_sympy()
-  
-  sym <- as.character(x)
-  
-  val <- if (inherits(v, "caracas_symbol")) {
-    v$pyobj
-  } else {
-    v
-  }
-  
-  y <- construct_symbol_from_pyobj(s$pyobj$subs(sym, val))
-  return(y)
-}
-
-#' Substitute af vector of symbols for a vector of values
-#' 
-#' @param s Expression
-#' @param x Names of symbol (vector)
-#' @param v Values for `x` (vector)
-#' 
-#' @examples 
-#' if (has_sympy()) {
-#'    x <- as_sym(paste0('x', 1:3))
-#'    e <- 2*x^2
-#'    e
-#'    subs_vec(e, x, 1:3)
-#'    subs_vec(e, x, x^2)
-#' }
-#' 
-#' @seealso [subs()], [subs_lst()]
-#' @concept caracas_symbol
-#' 
-#' @export
-subs_vec <- function(s, x, v) {
-  ensure_sympy()
-  
-  stopifnot_matrix(x)
-  
-  vv <- v
-  
-  if (inherits(v, "caracas_symbol") && symbol_is_matrix(v)) {
-    if (ncol(v) == 1L) {
-      vv <- lapply(seq_len(nrow(v)), function(i) v[i, ])
-    } else if (nrow(v) == 1L) {
-      vv <- lapply(seq_len(ncol(v)), function(i) v[, i])
-    } else {
-      stop("When v is a caracas matrix, one dimension must be 1")
-    }
-  }
-  
-  if (nrow(x) != 1L && ncol(x) != 1L) {
-    stop("x must have either 1 row or 1 column")
-  }
-  
-  if (ncol(x) > 1L) {
-    x <- t(x)
-  }
-  
-  if (length(vv) != nrow(x)) {
-    stop("Dimension mismatch")
-  }
-  
-  ss <- s
-  for (i in seq_along(vv)) {
-    ss <- subs(ss, x[i, ], vv[[i]])
-  }
-  
-  return(ss)
-}
-
-
-#' Substitute symbol for of value given by a list
-#' 
-#' Useful for substituting solutions into expressions.
-#' 
-#' @param s Expression
-#' @param x Named list of values
-#' 
-#' @examples 
-#' if (has_sympy()) {
-#'      p <- as_sym(paste0("p", 1:3))
-#'      y <- as_sym(paste0("y", 1:3))
-#'      a <- as_sym("a")
-#'      l <- sum(y*log(p))
-#'      L <- -l + a*(sum(p) - 1)
-#'      g <- der(L, c(a, p))
-#'      sols <- solve_sys(g, c(a, p))
-#'      sol <- sols[[1L]]
-#'      sol
-#'      H <- der2(L, c(p, a))
-#'      H
-#'      H_sol <- subs_lst(H, sol)
-#'      H_sol
-#' }
-#' 
-#' @seealso [subs()], [subs_vec()]
-#' 
-#' @concept caracas_symbol
-#' 
-#' @export
-subs_lst <- function(s, x) {
-  ensure_sympy()
-  
-  new_s <- s
-  
-  for (i in seq_along(x)) {
-    new_s <- subs(new_s, names(x)[i], x[[i]])
-  }
-  
-  return(new_s)
-}
-
 #' Get numerator and denominator of a fraction
 #' 
 #' @param x Fraction
-#' 
+#'
+#' @name fraction_parts
 #' @examples 
 #' if (has_sympy()) {
 #'      x <- as_sym("a/b")
@@ -479,8 +279,27 @@ fraction_parts <- function(x) {
 }
 
 
+#' @export
+#' @rdname fraction_parts
+numerator <- function(x) {
+    return(fraction_parts(x)$numerator)
+}
+
+#' @export
+#' @rdname fraction_parts
+denominator <- function(x) {
+    return(fraction_parts(x)$denominator)
+}
+
+
+
+
+
+
 
 #' Call a SymPy function directly on x
+#'
+#' Extend caracas by calling SymPy functions directly.
 #' 
 #' @param x Object to call `fun` on
 #' @param fun Function to call
@@ -539,4 +358,121 @@ sympy_func <- function(x, fun, ...) {
   })
   
   return(out)
+}
+
+
+#' Get free symbol in expression
+#' 
+#' @param x Expression in which to get the free symbols in
+#' 
+#' @examples 
+#' if (has_sympy()) {
+#'   def_sym(a, b)
+#'   x <- (a - b)^4
+#'   free_symbols(x)
+#' }
+#'  
+#' @concept caracas_symbol
+#' 
+#' @export
+free_symbols <- function(x) {
+  y <- x$pyobj$free_symbols
+  z <- reticulate::py_eval(paste0("list(", as.character(y), ")"), convert = TRUE)
+  z <- lapply(z, construct_symbol_from_pyobj)
+  return(z)
+}
+
+#' All variables
+#'
+#' Return all variables in caracas symbol
+#'
+#' @param x caracas symbol
+#'
+#' @examples
+#' if (has_sympy()){
+#'   x <- vector_sym(5)
+#'   all_vars(x)
+#' }
+#' 
+#' @concept caracas_symbol
+#' 
+#' @export
+all_vars <- function(x){
+  all.vars(as_expr(x))
+}
+
+
+
+
+
+
+
+#' Coerce symbol to character
+#'
+#' Coerce symbol to character
+#' @param x caracas symbol
+#' 
+#' @concept caracas_symbol
+#'
+#' @export
+as_character <- function(x){
+  ensure_sympy()
+  stopifnot_symbol(x)
+  
+  switch(symbol_class(x),
+         "matrix" ={as_character_matrix(x)},         
+         "vector"= {c(as_character_matrix(x))},
+         "atomic" ={as.character(x)}
+  )
+}
+
+
+
+#' Create list of factors as in a product
+#'
+#' @param ... factors
+#'
+#' @examples
+#' if (has_sympy()) {
+#'   d <- 2
+#'   m <- matrix_sym(d, d)
+#'   mi <- inv(m)
+#'   det_m <- det(m)
+#'   fl <- as_factor_list(1/det_m, det_m * mi)
+#'   tex(fl)
+#'   m <- matrix(1:4, nrow=2)
+#'   mi <- solve(m)
+#'   det_m <- det(m)
+#'   fl <- as_factor_list(1 / as_sym(det_m), det_m * mi)
+#'   tex(fl)
+#' }
+#' 
+#' @concept caracas_symbol
+#' 
+#' @export
+as_factor_list <- function(...){
+  lst <- list(...)
+  out <- lapply(lst, as_sym)  
+  class(out) <- c("caracas_factor_list", "list")
+  out
+}
+
+#' Divide or multiply matrix with factor.
+#' @name mat_div_mult
+#' @param m Matrix
+#' @param s Factor
+#' 
+#' @concept caracas_symbol
+#' 
+#' @export
+#' @rdname mat_div_mult
+mat_factor_div <- function(m, s){
+  numer <- 
+    as_factor_list(paste0("1/S(", s, ")"), s * m)
+}
+
+#' @export
+#' @rdname mat_div_mult
+mat_factor_mult <- function(m, s){
+  as_factor_list(s, m / s)
 }

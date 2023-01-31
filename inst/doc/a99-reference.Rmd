@@ -1,0 +1,455 @@
+---
+title: "99 - Reference"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{99 - Reference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, message=FALSE}
+library(caracas)
+```
+
+```{r, include = FALSE}
+inline_code <- function(x) {
+  x
+}
+
+if (!has_sympy()) {
+  # SymPy not available, so the chunks shall not be evaluated
+  knitr::opts_chunk$set(eval = FALSE)
+  
+  inline_code <- function(x) {
+    deparse(substitute(x))
+  }
+}
+```
+
+
+## Quick start
+
+```{r}
+x <- symbol('x')
+as.character(x)
+x
+as_expr(x)
+```
+
+
+```{r}
+2*x
+y <- symbol('y')
+sqrt(3*x^y)
+```
+
+```{r}
+z <- cos(x)^2 + sin(x)^2
+z
+simplify(z)
+tex(z)
+```
+
+```{r}
+z <- cos(x)*cos(y) - sin(x)*sin(y)
+z
+simplify(z)
+z <- cos(x + y)
+z
+expand(z)
+expand_trig(z)
+```
+
+```{r}
+x <- symbol('x')
+y <- symbol('y')
+z <- log(x*y)
+z
+expand_log(z)
+```
+
+
+### Sums
+
+```{r}
+x <- symbol("x")
+sum_(1/x, "x", 1, 10)
+sum_(1/x, x, 1, 10)
+s <- sum_(1/x, "x", 1, 10)
+as_expr(s)
+sum(1/(1:10))
+n <- symbol("n")
+simplify(sum_(x, x, 1, n))
+```
+
+
+### Products
+
+```{r}
+x <- symbol("x")
+p <- prod_(1/x, "x", 1, 10)
+p
+as_expr(p)
+prod(1/(1:10))
+n <- symbol("n")
+prod_(x, x, 1, n)
+```
+
+
+### Integrals
+
+```{r}
+x <- symbol("x")
+
+int(1/x, x, 1, 10)
+i1 <- int(1/x, x, 1, 10, doit = FALSE)
+i1
+tex(i1)
+doit(i1)
+int(1/x, x)
+i1 <- int(1/x, x, doit = FALSE)
+i1
+tex(i1)
+doit(i1)
+```
+
+### Limits
+
+
+```{r}
+x <- symbol("x")
+lim(sin(x)/x, "x", 0)
+lim(1/x, "x", 0, dir = '+')
+lim(1/x, "x", 0, dir = '-')
+```
+
+We can also postpone evaluation:
+
+```{r}
+x <- symbol("x")
+lim(sin(x)/x, "x", 0)
+lim(sin(x)/x, x, 0)
+```
+
+```{r}
+res <- lim(sin(x)/x, "x", 0, doit = FALSE)
+res
+as.character(res)
+tex(res)
+doit(res)
+as_expr(res)
+```
+
+### Derivatives
+
+Note that the function is called `d()` and not `deriv()`.
+
+```{r}
+x <- symbol("x")
+y <- symbol("y")
+f <- 3*x^2 + x*y^2
+f
+as_expr(f)
+der(f, "x")
+der(f, x)
+der(f, c("x", "y"))
+der(f, list(x, y))
+f1 <- der(f, list(x, y))
+f1
+as.character(f1)
+as_expr(f1)
+eval(as_expr(f1), list(x = 1, y = 2))
+der(f1, list(x, y))
+f2 <- der2(f, list(x, y))
+f2
+as_expr(f2)
+eval(as_expr(f2), list(x = 1, y = 2))
+```
+
+
+```{r}
+x <- symbol("x")
+y <- symbol("y")
+f <- eval_to_symbol("[3*x**2 + x*y**2, 2*x, 5*y]")
+f
+der(f, list(x, y))
+```
+
+### Taylor expansion
+
+```{r}
+def_sym(x)
+f <- cos(x)
+ft_with_O <- taylor(f, x0 = 0, n = 4+1)
+ft_with_O
+ft_with_O %>% drop_remainder() %>% as_expr()
+```
+
+
+
+## Linear algebra
+
+```{r}
+A <- matrix(c("x", 0, 0, "2*x"), 2, 2)
+A
+B <- as_sym(A)
+B
+2*B
+B*B # Component-wise / Hadamard product
+dim(B)
+sqrt(B)
+log(B)
+sum(B)
+B %*% t(B)
+diag(B)
+cbind(B, B)
+rbind(B, B)
+```
+
+```{r}
+det(B)
+QRdecomposition(B)
+```
+
+```{r}
+A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
+B <- as_sym(A)
+eigenval(B)
+eigenvec(B)
+eigen(eval(as_expr(B), list(a = 2)))
+```
+
+```{r}
+B
+diag(B)
+diag(B) <- "b"
+B
+diag(B)[-2] <- "a"
+B
+```
+
+
+## Solve
+
+* Linear system of equations: `inv()` / `solve_lin()`
+* Non-linear system of equations: `solve_sys()`
+
+Below find an example with maximising the multinomial likelihood.
+
+```{r}
+p <- as_sym(paste0("p", 1:3))
+y <- as_sym(paste0("y", 1:3))
+a <- as_sym("a")
+l <- sum(y*log(p))
+l
+L <- -l + a*(sum(p) - 1)
+L
+tex(L)
+g <- der(L, list(p, a))
+g
+sol <- solve_sys(g, list(p, a))
+sol
+sol[[1L]]$p1
+tex(sol[[1L]]$p1)
+```
+
+### Assumptions
+
+```{r}
+x <- symbol("x", positive = TRUE)
+solve_sys(x^2 - 1, 0, x)
+
+x <- symbol("x", real = TRUE)
+solve_sys(x^2 + 1, 0, x)
+
+x <- symbol("x")
+solve_sys(x^2 + 1, 0, x)
+```
+
+## Substitution
+
+```{r}
+x <- symbol('x')
+eq <- 2*x^2 - x
+eq
+subs(eq, x, "y")
+```
+
+```{r}
+p <- as_sym(paste0("p", 1:3))
+y <- as_sym(paste0("y", 1:3))
+a <- as_sym("a")
+l <- sum(y*log(p))
+L <- -l + a*(sum(p) - 1)
+g <- der(L, c(a, p))
+sols <- solve_sys(g, list(a, p))
+sol <- sols[[1L]]
+sol
+H <- der2(L, list(p, a))
+H
+H_sol <- subs(H, sol)
+H_sol
+```
+
+
+## Subsetting
+
+Note that all vectors in `caracas` are column vectors.
+
+```{r}
+A <- matrix(c("a", 0, 0, 0, "a", "a", "a", 0, 0), 3, 3)
+B <- as_sym(A)
+B[, 2]
+B[, -2]
+B[1, ]
+B[1, , drop = FALSE] # Note this is a 1x3 matrix
+B[, 2] <- "x"
+B
+```
+
+## Interactively show $\LaTeX$ representation
+
+```r
+texshow(B)
+```
+
+plots the following in the plot window:
+
+```{r, error=TRUE}
+texshow(B)
+```
+
+You can also provide a string instead:
+
+```r
+texshow(paste0("B = ", tex(B)))
+```
+
+giving
+
+```{r, error=TRUE}
+texshow(paste0("B = ", tex(B)))
+```
+
+## Using `SymPy` directly
+
+```{r}
+sympy <- get_sympy()
+```
+
+```{r}
+sympy$diff("2*a*x", "x")
+sympy$solve("x**2 - 1", "x")
+```
+
+## Assumptions
+
+Below we give a brief example of assumptions.
+First consider the Cholesky decomposition of a matrix:
+
+```{r}
+A <- matrix(c("x+1", 1, 1, 1), 2, 2) %>% as_sym()
+A
+```
+
+```{r, error=TRUE}
+do_la(A, "cholesky")
+```
+
+This fails as `A` is not positive (semi-)definite.
+
+To ensure this, we need to impose restrictions on `x`. 
+This is done by defining a symbol with an assumption about positivity:
+
+```{r}
+y <- symbol("y", positive = TRUE)
+```
+
+We continue and define `B`, where it is important that 
+`declare_symbols = FALSE` or else a new `y` will automatically 
+be defined by `caracas` overwriting the above definition:
+
+```{r}
+B <- as_sym("[[y + 1, 1], [1, 1]]", declare_symbols = FALSE)
+B
+do_la(B, "cholesky")
+```
+
+It is possible to ask for properties (see <https://docs.sympy.org/latest/modules/assumptions/ask.html>):
+
+```{r}
+ask(y, "positive")
+ask(B, "hermitian")
+ask(A, "hermitian")
+```
+
+
+## Output
+
+```{r}
+# Multinomial likelihood
+p <- as_sym(paste0("p", 1:3))
+y <- as_sym(paste0("y", 1:3))
+a <- as_sym("a")
+l <- sum(y*log(p))
+L <- -l + a*(sum(p) - 1)
+L
+print(L, ascii = TRUE)
+g <- der(L, list(p, a))
+sol <- solve_sys(g, list(p, a))
+sol
+print(sol, simplify = FALSE)
+```
+
+```{r}
+as.character(g)
+as_character_matrix(g)
+```
+
+
+
+### Options
+
+The following options are available:
+
+* `caracas.print.method` (`utf8` is default, others are: `prettyascii` and `ascii`)
+* `caracas.print.rowvec`
+* `caracas.print.sol.simplify`
+
+```{r}
+sol
+L
+options(caracas.print.method = "prettyascii") 
+sol
+L
+options(caracas.print.method = "ascii") 
+sol
+L
+options(caracas.print.method = NULL) # Or 'utf8' 
+sol
+L
+```
+
+```{r}
+p
+options(caracas.print.rowvec = FALSE)
+p
+options(caracas.print.rowvec = NULL) # reset to default (TRUE)
+```
+
+```{r}
+sol
+options(caracas.print.sol.simplify = FALSE)
+sol
+options(caracas.print.sol.simplify = NULL) # reset to default (TRUE)
+```
+
+
+
