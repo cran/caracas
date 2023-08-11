@@ -16,7 +16,7 @@
 #'   ls()
 #'   def_sym("x1", "x2", "x3")
 #'   ls()
-#'   def_sym("x1", "x2", "x3", warn = TRUE)
+#'   # def_sym("x1", "x2", "x3", warn = TRUE) # Do not run as will cause a warning
 #'   ls()
 #'   def_sym(i, j, charvec = c("x", "y"))
 #'   ls()
@@ -94,8 +94,8 @@ def_sym <- function(...,
 #'  }
 #' @export  
 #' @rdname def_sym
-def_sym_vec <- function(x, env=parent.frame()){  ## FIXME: OK; maybe different name???
-    for (i in seq_along(x)){
+def_sym_vec <- function(x, env=parent.frame()) {  ## FIXME: OK; maybe different name???
+    for (i in seq_along(x)) {
         assign(x[i], as_sym(x[i]), envir = env)
     }
 }

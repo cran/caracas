@@ -4,7 +4,7 @@ TXT_NOT_CARACAS_SYMBOL <- paste0("must be a caracas_symbol, ",
 
 PATTERN_PYHTON_VARIABLE <- "[a-zA-Z]+[a-zA-Z0-9_]*"
 
-stopifnot_symbol <- function(x){
+stopifnot_symbol <- function(x) {
   if (!inherits(x, "caracas_symbol")) {
     stop(paste0("'x' ", TXT_NOT_CARACAS_SYMBOL))
   }
@@ -57,8 +57,10 @@ eval_to_symbol <- function(x) {
     # we need to be sure that there are no characters in front of the 
     # number in the numerator
     
-    if (grepl("[a-zA-Z]+[0-9-.]+/[0-9-.]+", x, perl = TRUE)) {
-      # There was a character (e.g. 'x1/2'), do nothing
+    if (grepl("[a-zA-Z_]+[0-9-.]+/[0-9-.]+", x, perl = TRUE)) {
+      # There was a character (e.g. 'x1/2') 
+      # or a subscript/underscore (e.g. 3*y_11/4)
+      # do nothing
     } else {
       # S(): Sympify
       x <- gsub("([0-9-.]+)/([0-9-.]+)", "S(\\1)/S(\\2)", x, perl = TRUE)
@@ -191,23 +193,25 @@ try_doit <- function(x) {
 #' 
 #' @examples 
 #' if (has_sympy()) {
-#'   x <- as_sym("[[[x1/(b2 + x1)], 
-#'                  [x2/(b2 + x2)], 
-#'                  [x3/(b2 + x3)]], 
-#'                 [[-b1*x1/(b2 + x1)^2], 
-#'                  [-b1*x2/(b2 + x2)^2], 
-#'                  [-b1*x3/(b2 + x3)^2]]]")
-#'   x
-#'   unbracket(x)
-#'   
-#'   x <- as_sym("Matrix([[b1*x1/(b2 + x1)], [b1*x2/(b2 + x2)], [b1*x3/(b2 + x3)]])")
-#'   
+#'   x <- as_sym(paste0("x", 1:3))
+#'   y <- as_sym("y")
+#'   l <- list(x, y)
+#'   l
+#'   unbracket(l)
 #' }
 #' 
 #' @concept caracas_symbol
 #' 
 #' @export
 unbracket <- function(x) {
+  if (!inherits(x, "caracas_symbol") && is.list(x)) {
+    z <- lapply(x, as_character)
+    z <- do.call(rbind, z)
+    z <- as_sym(z)
+    #z <- to_vector(z)
+    return(z)
+  }
+  
   z <- as.character(x)
 
   zz <- gsub("\\[([^]]+)\\]", "\\1", z)
@@ -226,6 +230,7 @@ extract_elements <- function(x) {
   
   return(zz)
 }
+
 
 
 ## concatenate
@@ -292,11 +297,6 @@ denominator <- function(x) {
 }
 
 
-
-
-
-
-
 #' Call a SymPy function directly on x
 #'
 #' Extend caracas by calling SymPy functions directly.
@@ -341,17 +341,14 @@ sympy_func <- function(x, fun, ...) {
   
   # See if x has fun method
   out <- tryCatch({
-    p <- do.call(x$pyobj[[fun]], args)
-    res <- construct_symbol_from_pyobj(p)
-    res
+      p <- do.call(x$pyobj[[fun]], args)
+      res <- construct_symbol_from_pyobj(p)
+      res
   }, error = function(cond) {
-    
-    # ...it did not, try from global namespace:
-    
+      
+    # ...it did not, try from global namespace:    
     s <- get_sympy()
-    
     args <- c(x$pyobj, args)
-    
     p <- do.call(s[[fun]], args)
     res <- construct_symbol_from_pyobj(p)
     return(res)
@@ -397,14 +394,9 @@ free_symbols <- function(x) {
 #' @concept caracas_symbol
 #' 
 #' @export
-all_vars <- function(x){
-  all.vars(as_expr(x))
+all_vars <- function(x) {
+  all.vars(as_expr(x)) 
 }
-
-
-
-
-
 
 
 #' Coerce symbol to character
@@ -415,14 +407,20 @@ all_vars <- function(x){
 #' @concept caracas_symbol
 #'
 #' @export
-as_character <- function(x){
-  ensure_sympy()
-  stopifnot_symbol(x)
-  
-  switch(symbol_class(x),
-         "matrix" ={as_character_matrix(x)},         
-         "vector"= {c(as_character_matrix(x))},
-         "atomic" ={as.character(x)}
+as_character <- function(x) {
+    ensure_sympy()
+    stopifnot_symbol(x)
+    
+    switch(symbol_class(x),
+           "matrix" = {
+               as_character_matrix(x)
+           },         
+           "vector" = {
+               c(as_character_matrix(x))
+           },
+           "atomic" = {
+               as.character(x)
+           }
   )
 }
 
@@ -450,7 +448,7 @@ as_character <- function(x){
 #' @concept caracas_symbol
 #' 
 #' @export
-as_factor_list <- function(...){
+as_factor_list <- function(...) {
   lst <- list(...)
   out <- lapply(lst, as_sym)  
   class(out) <- c("caracas_factor_list", "list")
@@ -466,13 +464,14 @@ as_factor_list <- function(...){
 #' 
 #' @export
 #' @rdname mat_div_mult
-mat_factor_div <- function(m, s){
+
+mat_factor_div <- function(m, s) {
   numer <- 
     as_factor_list(paste0("1/S(", s, ")"), s * m)
 }
 
 #' @export
 #' @rdname mat_div_mult
-mat_factor_mult <- function(m, s){
-  as_factor_list(s, m / s)
+mat_factor_mult <- function(m, s) {
+  as_factor_list(s, m / s) 
 }

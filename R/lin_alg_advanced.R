@@ -20,6 +20,9 @@
 #'   do_la(A, "inv")
 #'   inv(A)
 #'   
+#'   do_la(A, "trace")
+#'   trace_(A)
+#'   
 #'   do_la(A, "echelon_form")
 #'   do_la(A, "rank")
 #'   
@@ -172,14 +175,15 @@ finalise_rref <- function(vals) {
 #' Performs various linear algebra operations like finding the inverse, 
 #' the QR decomposition, the eigenvectors and the eigenvalues.
 #' 
-#' @param x A matrix for which a property is requested
-#' @param ... Auxillary arguments
+#' @param x A matrix for which a property is requested.
+#' @param matrix When relevant should a matrix be returned.
+#' @param ... Auxillary arguments.
 #' 
 #' @seealso [do_la()]
 #' 
 #' @examples 
 #' if (has_sympy()) {
-#'   A <- matrix(c("a", "0", "0", "1"), 2, 2) %>% as_sym()
+#'   A <- matrix(c("a", "0", "0", "1"), 2, 2) |> as_sym()
 #'   
 #'   QRdecomposition(A)
 #'   eigenval(A)
@@ -191,7 +195,7 @@ finalise_rref <- function(vals) {
 #'   ## Matrix inversion:
 #'   d <- 3
 #'   m <- matrix_sym(d, d)
-#'   print(system.time(inv(m)))       ## Gauss elimination
+#'   print(system.time(inv(m)))                  ## Gauss elimination
 #'   print(system.time(inv(m, method="cf")))     ## Cofactor 
 #'   print(system.time(inv(m, method="lu")))     ## LU decomposition
 #'   if (requireNamespace("Ryacas")){
@@ -209,8 +213,6 @@ finalise_rref <- function(vals) {
 #'
 #'   A <- as_sym("[[1, 2, 3], [4, 5, 6]]")
 #'   pinv(A)
-#'
-#' 
 #' }
 #' 
 #' @return Returns the requested property of a matrix.
@@ -219,23 +221,34 @@ finalise_rref <- function(vals) {
 #' @name linalg
 NULL
 
-
 #' @rdname linalg
 #' @export
-columnspace <- function(x) {
-    return(do_la(x, "columnspace"))
+columnspace <- function(x, matrix=TRUE) {
+    out <- do_la(x, "columnspace")
+    if (matrix)
+        return(do.call(cbind, out))
+    else 
+        return(out)
 }
 
 #' @rdname linalg
 #' @export
-nullspace <- function(x) {
-    return(do_la(x, "nullspace"))
+nullspace <- function(x, matrix=TRUE) {
+    out <- do_la(x, "nullspace")
+    if (matrix)
+        return(do.call(cbind, out))
+    else 
+        return(out)
 }
 
 #' @rdname linalg
 #' @export
-rowspace <- function(x) {
-    return(do_la(x, "rowspace"))
+rowspace <- function(x, matrix=TRUE) {
+    out <- do_la(x, "rowspace")
+    if (matrix)
+        return(do.call(cbind, out))
+    else 
+        return(out)
 }
 
 #' @rdname linalg
@@ -246,10 +259,9 @@ singular_values <- function(x) {
 
 
 #' @rdname linalg
-#' @param method The default works by $LU$ decomposition. 
-#' The alternatives are Gaussian elimination (`gauss`), 
-#' the cofactor method (`cf`), 
-#' and `Ryacas` (`yac`).
+#' @param method The default works by $LU$ decomposition.  The
+#'     alternatives are Gaussian elimination (`gauss`), the cofactor
+#'     method (`cf`), and `Ryacas` (`yac`).
 #' @export
 inv <- function(x, method = c("lu", "gauss", "cf", "yac")) {
   method <- match.arg(method)
@@ -268,21 +280,21 @@ inv <- function(x, method = c("lu", "gauss", "cf", "yac")) {
   ## }
   
   switch(method,
-         lu = inv_lu(x),
+         lu    = inv_lu(x),
          gauss = do_la(x, "inv"),
-         cf = inv_cf(x),
-         yac = inv_yac(x))
+         cf    = inv_cf(x),
+         yac   = inv_yac(x))
 }
 
-inv_cf <- function(x){
+inv_cf <- function(x) {
     return(t(sympy_func(x, "cofactor_matrix")) / det(x))
 }
 
-inv_lu <- function(x){
-    construct_symbol_from_pyobj(x$pyobj$inv(method="LU"))
+inv_lu <- function(x) {
+      construct_symbol_from_pyobj(x$pyobj$inv(method="LU"))
 }
 
-inv_yac <- function(x){
+inv_yac <- function(x) {
     if (!requireNamespace("Ryacas", quietly = TRUE)) {
       stop("This method requires Ryacas - please install.packages('Ryacas')")
     }
@@ -298,10 +310,10 @@ inv_yac <- function(x){
 
 #' @rdname linalg
 #' @export
-inv2fl <- function(x){
+inv2fl <- function(x) {
   xi <- inv(x)
   d <- denominator(xi[1,1])
-  as_factor_list(1/d, d * xi)
+  as_factor_list(1 / d, d * xi)
 }
 
 #' @rdname linalg
@@ -359,7 +371,14 @@ det.caracas_symbol <- function(x, ...) {
     return(do_la(x, "det"))
 }
 
-
+#' @rdname linalg
+#' @export
+trace_ <- function(x) {
+    ensure_sympy()
+    stopifnot_matrix(x)
+    ## return(sympy_func(x, "Trace"))
+    return(sum(diag(x)))
+}
 
 GramSchmidt_worker <- function(x) {
     ensure_sympy()
