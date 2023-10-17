@@ -32,8 +32,8 @@ e <- as_sym(paste0("e", 0:3))
 x <- as_sym(paste0("x", 0:3))
 u <- as_sym(paste0("u", 1:3))
 y <- as_sym(paste0("y", 1:3))
-eu <- rbind(e, u)
-xy <- rbind(x, y)
+eu <- c(e, u)
+xy <- c(x, y)
 
 ## -----------------------------------------------------------------------------
 N <- 3

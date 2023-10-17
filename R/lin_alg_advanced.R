@@ -189,7 +189,6 @@ finalise_rref <- function(vals) {
 #'   eigenval(A)
 #'   eigenvec(A)
 #'   inv(A)
-#'   inv2fl(A)
 #'   det(A)
 #'   
 #'   ## Matrix inversion:
@@ -259,11 +258,11 @@ singular_values <- function(x) {
 
 
 #' @rdname linalg
-#' @param method The default works by $LU$ decomposition.  The
-#'     alternatives are Gaussian elimination (`gauss`), the cofactor
+#' @param method The default works by Gaussian elimination.  The
+#'     alternatives are $LU$ decomposition (`lu`), the cofactor
 #'     method (`cf`), and `Ryacas` (`yac`).
 #' @export
-inv <- function(x, method = c("lu", "gauss", "cf", "yac")) {
+inv <- function(x, method = c("gauss", "lu", "cf", "yac")) {
   method <- match.arg(method)
   
   stopifnot_symbol(x)
@@ -280,8 +279,8 @@ inv <- function(x, method = c("lu", "gauss", "cf", "yac")) {
   ## }
   
   switch(method,
-         lu    = inv_lu(x),
          gauss = do_la(x, "inv"),
+         lu    = inv_lu(x),
          cf    = inv_cf(x),
          yac   = inv_yac(x))
 }
@@ -306,15 +305,6 @@ inv_yac <- function(x) {
     return(B)
 }
 
-
-
-#' @rdname linalg
-#' @export
-inv2fl <- function(x) {
-  xi <- inv(x)
-  d <- denominator(xi[1,1])
-  as_factor_list(1 / d, d * xi)
-}
 
 #' @rdname linalg
 #' @export
@@ -399,3 +389,65 @@ GramSchmidt_worker <- function(x) {
     
     return(out)
 }
+
+#' @importFrom methods setOldClass
+setOldClass("caracas_symbol")
+
+#' Kronecker product of two matrices
+#'
+#' Computes the Kronecker product of two matrices.
+#'
+#' @param X,Y matrices as caracas symbols.
+#' @param FUN a function; it may be a quoted string.
+#' @param make.dimnames Provide dimnames that are the product of the dimnames of
+#' ‘X’ and ‘Y’.
+#' @param ... optional arguments to be passed to ‘FUN’.
+#' 
+#' @return Kronecker product of A and B.
+#'
+#' @examples
+#' if (has_sympy()) {
+#'   A <- matrix_sym(2, 2, "a")
+#'   B <- matrix_sym(2, 2, "b")
+#'   II <- matrix_sym_diag(2)
+#'   EE <- eye_sym(2,2)
+#'   JJ <- ones_sym(2,2)
+#'
+#'   kronecker(A, B)
+#'   kronecker(A, B, FUN = "+")
+#'   kronecker(II, B)
+#'   kronecker(EE, B)
+#'   kronecker(JJ, B)
+#' }
+#'
+#' @concept linalg
+#' @export
+setMethod(
+  "kronecker", 
+  signature = c("caracas_symbol", "caracas_symbol"), 
+  definition = function(X, Y, FUN = "*", make.dimnames = FALSE, ...) {
+    
+    stopifnot_matrix(X)
+    stopifnot_matrix(Y)
+    
+    FUN <- match.fun(FUN)
+    
+    do_col <- function(i, X, Y) {
+      rr <-
+        lapply(seq_len(ncol(X)), function(j) {
+          FUN(X[i,j], Y)
+        } 
+        )
+      out <- do.call(cbind, rr)
+      out
+    }
+    
+    rr <- lapply(seq_len(nrow(X)),
+                 function(i) {
+                   do_col(i, X, Y)
+                 })
+    out <- do.call(rbind, rr)
+    out
+  }
+)
+

@@ -7,7 +7,6 @@
 \alias{rowspace}
 \alias{singular_values}
 \alias{inv}
-\alias{inv2fl}
 \alias{eigenval}
 \alias{eigenvec}
 \alias{GramSchmidt}
@@ -26,9 +25,7 @@ rowspace(x, matrix = TRUE)
 
 singular_values(x)
 
-inv(x, method = c("lu", "gauss", "cf", "yac"))
-
-inv2fl(x)
+inv(x, method = c("gauss", "lu", "cf", "yac"))
 
 eigenval(x)
 
@@ -51,8 +48,8 @@ trace_(x)
 
 \item{matrix}{When relevant should a matrix be returned.}
 
-\item{method}{The default works by $LU$ decomposition.  The
-alternatives are Gaussian elimination (\code{gauss}), the cofactor
+\item{method}{The default works by Gaussian elimination.  The
+alternatives are $LU$ decomposition (\code{lu}), the cofactor
 method (\code{cf}), and \code{Ryacas} (\code{yac}).}
 
 \item{...}{Auxillary arguments.}
@@ -72,7 +69,6 @@ if (has_sympy()) {
   eigenval(A)
   eigenvec(A)
   inv(A)
-  inv2fl(A)
   det(A)
   
   ## Matrix inversion:

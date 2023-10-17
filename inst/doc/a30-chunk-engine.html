@@ -12,7 +12,7 @@
 
 
 
-<title>95 - Arbitrary precision arithmetic</title>
+<title>Chunk engine for easy tex output in Rmarkdown and Quarto</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -336,42 +336,80 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">95 - Arbitrary precision arithmetic</h1>
+<h1 class="title toc-ignore">Chunk engine for easy tex output in
+Rmarkdown and Quarto</h1>
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(caracas)</span></code></pre></div>
-<div id="an-example" class="section level2">
-<h2>An example</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>n_2 <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(<span class="st">&quot;2&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>n_pi <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(<span class="st">&quot;pi&quot;</span>, <span class="at">declare_symbols =</span> <span class="cn">FALSE</span>) <span class="co"># pi is a constant in SymPy</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(n_2) <span class="sc">*</span> n_pi</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>x</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; c: √2⋅π</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="fu">N</span>(x)</span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; c: 4.44288293815837</span></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="fu">N</span>(x, <span class="dv">5</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; c: 4.4429</span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="fu">N</span>(x, <span class="dv">50</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; c: 4.4428829381583662470158809900606936986146216893757</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="fu">as.character</span>(<span class="fu">N</span>(x, <span class="dv">50</span>))</span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; [1] &quot;4.4428829381583662470158809900606936986146216893757&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">def_sym</span>(z, w)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>q <span class="ot">&lt;-</span> z <span class="sc">+</span> z<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> w<span class="sc">^</span><span class="dv">3</span></span></code></pre></div>
+<p>We have added a chunk engine that outputs (an object) to tex format.
+That is, <code>tex()</code> is applied to the object and the output is
+put inside a display math environment.</p>
+<p>For example, if you write the following:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>```{rtex}</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>library(caracas)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>def_sym(x, y)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>p &lt;- x^3 + y^2</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>der(p, c(x, y))</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>```</span></code></pre></div>
+<p>You will get this result:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(caracas)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">def_sym</span>(x, y)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>p <span class="ot">&lt;-</span> x<span class="sc">^</span><span class="dv">3</span> <span class="sc">+</span> y<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">der</span>(p, <span class="fu">c</span>(x, y))</span></code></pre></div>
+<p><span class="math display">\[\left[\begin{matrix}3 x^{2} &amp; 2
+y\end{matrix}\right]\]</span></p>
+<div id="multiple-lines" class="section level1">
+<h1>Multiple lines</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>```{rtex}</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>def_sym(z, w)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>q &lt;- z + z^2 + w^3</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a># Comment</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>der(q, c(z, w))</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>p &lt;- z^2 + w^8</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>der2(p, c(z, w))</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>```</span></code></pre></div>
+<p>Gives</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">def_sym</span>(z, w)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>q <span class="ot">&lt;-</span> z <span class="sc">+</span> z<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> w<span class="sc">^</span><span class="dv">3</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># Comment</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="fu">der</span>(q, <span class="fu">c</span>(z, w))</span></code></pre></div>
+<p><span class="math display">\[\left[\begin{matrix}2 z + 1 &amp; 3
+w^{2}\end{matrix}\right]\]</span></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>p <span class="ot">&lt;-</span> z<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> w<span class="sc">^</span><span class="dv">8</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">der2</span>(p, <span class="fu">c</span>(z, w))</span></code></pre></div>
+<p><span class="math display">\[\left[\begin{matrix}2 &amp; 0\\0 &amp;
+56 w^{6}\end{matrix}\right]\]</span></p>
+<p>Note that to achieve this, tidying code has been disabled for
+<code>rtex</code> chunks.</p>
 </div>
-<div id="another-example" class="section level2">
-<h2>Another example</h2>
-<p>As <code>SymPy</code> requires <a href="https://mpmath.org/"><code>mpmath</code></a> this can be used
-directly, for example like this (example due to Hans W Borchers,
-thanks!):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>mpmath <span class="ot">&lt;-</span> reticulate<span class="sc">::</span><span class="fu">import</span>(<span class="st">&#39;mpmath&#39;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>mpmath<span class="sc">$</span>mp<span class="sc">$</span>dps <span class="ot">&lt;-</span> <span class="dv">30</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>z <span class="ot">&lt;-</span> mpmath<span class="sc">$</span><span class="fu">mpc</span>(<span class="at">real =</span> <span class="st">&#39;1.0&#39;</span>, <span class="at">imag =</span> <span class="st">&#39;63.453&#39;</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>zeta_z <span class="ot">&lt;-</span> mpmath<span class="sc">$</span><span class="fu">zeta</span>(z)</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>zeta_z</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; mpc(real=&#39;2.34546406268004345885821002260475&#39;, imag=&#39;-0.641476965582898402371607967235787&#39;)</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="fu">as.character</span>(zeta_z<span class="sc">$</span>real)</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2.3454640626800434588582100226&quot;</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="fu">as.character</span>(zeta_z<span class="sc">$</span>imag)</span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; [1] &quot;-0.641476965582898402371607967236&quot;</span></span></code></pre></div>
+<div id="check-with-no-echo" class="section level1">
+<h1>Check with no echo</h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>```{rtex, echo = FALSE}</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>der2(p, c(z, w))</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>```</span></code></pre></div>
+<p><span class="math display">\[\left[\begin{matrix}2 &amp; 0\\0 &amp;
+56 w^{6}\end{matrix}\right]\]</span></p>
+</div>
+<div id="custom-tex" class="section level1">
+<h1>Custom <code>tex()</code></h1>
+<p>You can also create your own custom <code>tex()</code> function:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>tex <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  caracas<span class="sc">::</span><span class="fu">tex</span>(x, <span class="at">zero_as_dot =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">der2</span>(p, <span class="fu">c</span>(z, w))</span></code></pre></div>
+<p><span class="math display">\[\left[\begin{matrix}2 &amp; .\\. &amp;
+56 w^{6}\end{matrix}\right]\]</span></p>
+<p>The reason this works is because <code>rtex</code> just calls
+<code>tex()</code> and if you define one in global namespace, then this
+is previous in the search path than the one provided by
+<code>caracas</code>.</p>
+</div>
+<div id="notes" class="section level1">
+<h1>Notes</h1>
+<p>Note that all lines generating output will get
+<code>tex()</code>’ed. </p>
 </div>
 
 

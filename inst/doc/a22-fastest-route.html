@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caracas)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(caracas)</span></code></pre></div>
 <p>A <a href="https://ing.dk/artikel/taenkeboks-den-hurtigste-vej-mellem-og-b-er-1150-m-lang">problem</a>
 was posted by the Danish newspaper, <em>Ingeniøren</em>, and it goes
 like this:</p>
@@ -371,22 +371,22 @@ cross through the forest to the dedicated walking path (<span class="math inline
 the distance between <span class="math inline">\(B\)</span> and <span class="math inline">\(D\)</span>. That is, how much to walk on fast
 walking path before crossing into the forest.</p>
 <p>Formulating using <code>caracas</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>AB <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(<span class="st">&#39;300&#39;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>AB</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: 300</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>AC <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(<span class="st">&#39;1000&#39;</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>AC</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: 1000</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>BC <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(AC<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> AB<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>BC</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: 100⋅√91</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="fu">symbol</span>(<span class="st">&#39;k&#39;</span>) <span class="co"># |BD|</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>DC <span class="ot">&lt;-</span> BC <span class="sc">-</span> k</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>AD <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(AB<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> k<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>AD</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c:    ____________</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      ╱  2         </span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ╲╱  k  + 90000</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>AB <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(<span class="st">&#39;300&#39;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>AB</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; c: 300</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>AC <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(<span class="st">&#39;1000&#39;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>AC</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; c: 1000</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>BC <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(AC<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> AB<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>BC</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; c: 100⋅√91</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="fu">symbol</span>(<span class="st">&#39;k&#39;</span>) <span class="co"># |BD|</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>DC <span class="ot">&lt;-</span> BC <span class="sc">-</span> k</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>AD <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(AB<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> k<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>AD</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; c:    ____________</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt;      ╱  2         </span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt;    ╲╱  k  + 90000</span></span></code></pre></div>
 <p>So for a distance of <span class="math inline">\(|AD|\)</span>, you
 travel by 5 m/s, and then for a distance of <span class="math inline">\(- k + 100 \sqrt{91}\)</span> you travel by 2 m/s.
 Thus it takes <span class="math inline">\(\frac{\sqrt{k^{2} +
@@ -395,71 +395,70 @@ and <span class="math inline">\(- \frac{k}{5} + 20 \sqrt{91}\)</span> to
 travel <span class="math inline">\(DC\)</span>.</p>
 <p>The question is: What is the fastest way to get from <span class="math inline">\(A\)</span> to <span class="math inline">\(C\)</span>?</p>
 <p>First, the total duration of the route is:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>l <span class="ot">&lt;-</span> AD<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> DC<span class="sc">/</span><span class="dv">5</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>l</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c:          ____________         </span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            ╱  2                  </span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      k   ╲╱  k  + 90000          </span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    - ─ + ─────────────── + 20⋅√91</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      5          2</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>lfun <span class="ot">&lt;-</span> <span class="fu">as_expr</span>(l)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>lfun</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; expression(-k/5 + sqrt(k^2 + 90000)/2 + 20 * sqrt(91))</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>ks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">as_expr</span>(AC), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ls <span class="ot">&lt;-</span> <span class="fu">eval</span>(lfun, <span class="fu">list</span>(<span class="at">k =</span> ks))</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ks, ls, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;k&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Time A to C&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>l <span class="ot">&lt;-</span> AD<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> DC<span class="sc">/</span><span class="dv">5</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>l</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; c:          ____________         </span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt;            ╱  2                  </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt;      k   ╲╱  k  + 90000          </span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt;    - ─ + ─────────────── + 20⋅√91</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt;      5          2</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>lfun <span class="ot">&lt;-</span> <span class="fu">as_expr</span>(l)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>lfun</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; expression(-k/5 + sqrt(k^2 + 90000)/2 + 20 * sqrt(91))</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>ks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">as_expr</span>(AC), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>ls <span class="ot">&lt;-</span> <span class="fu">eval</span>(lfun, <span class="fu">list</span>(<span class="at">k =</span> ks))</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="fu">plot</span>(ks, ls, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;k&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Time A to C&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAHgCAMAAABNUi8GAAAC/VBMVEUAAAABAQECAgIDAwMEBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUWFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJycoKCgpKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tMTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1/f3+AgICBgYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OUlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7///+qtkHrAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAbDklEQVR4nO3de1xUdf7H8YNa5o005C4qeL+xXghJu3j7pZTmJc0s7B6puSy1taBrmOVma1tKmpfVTKzV1EwNL4mlqZm2rpm6gbcyUtNENDGQ25zHb2ZYEOMcmDPnfM73c2bezz/G0TnM52u9HsKcOXOOJAMwJoleAEB1ECiwhkCBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYM3gQJ/vAeCC28+KCTRmyT6AmrX5VlCgXxn7fOChIhEocIZAgTUECqwhUGANgQJrCBRYQ6DAGgIF1hAocPHfjxX+EIECE5/4r1b4UwQKPMwK/ELpjxEocHD1sT+cVHwAgQIDZ3uN/E35EQQK4n3TIsWm8hACBeHSA5apPkYXaOH53GoeRaDwP7YZzb5Wf5Qo0OzJ4T6SVLd18vcqGyBQKFMQF3OmmodpAt1fP2z87GVpqRMjmhxQ3gKBgtNPPcYWVPc4TaB9YvPL7hSPGaC8BQIFh/3NU6rfgCZQ34r3BHY2Vt4CgYLd8gCltzcrowk0akL5vak9lbdAoCDbUiIO1bQNTaCrfWIX787M2pM2orbS+6syAgVZvjykz/kaNyJ6FZ/eV3Lw6bdRZQME6vVOdB5XVPNWZPtBcw9nZBy8oPowAvV2O0NmuLIZdtSDEAuDtrq0HXbUgwDFz3Y87tqW2FEP5rvQ/95fXdzU5B31ueWiEaj3OtI+ocTVbc3dUb+tSTmf2VqeDzzJpsAlrm8sakd9w39qeT7wIK8326Nha1E76hGolyqIizqlZXtRO+oRqHc603O0ymc7VIjaUY9AvdJ+9c92qKD8yEfpcfXziyNQb7SixoOXqqAJ9Knt9puZvpLUfJXKFgjU+5QmtTqs+YtoApXmy/J86ZE16+NrbVLeAoF6nbxhd5zT/lV0gXaJd9yb2Ft5CwTqbY53infh4KUq6AKtv85xL91XeQsE6mW+CE516+voAu3mXNC0DspbIFDvkhqseOalmhEFGtA//m6/E7Ltg4BE5S0QqDcpfCryBze/lCbQNW9MGNT2xhXyPqlnvvIWCNSLnO/j8sFLVRDuBy0tlM9llKo8iEC9x7fhSWoZ1EzUuZkQqNdYFaC2M9wVCBRI2V5q+Y2er0egQClvRG9Xr6etDIECoezuTxfqewYECnQ+C5qr9ykQKJB5O2ib7udAoECkeGIXtQ+da4BAgcb5PoPd3jtfCQIFEgf07J2vBIECheUBHxnzRAgUjGdLab7PoKdCoGC4y24dO68MgYLRjnV069h5ZQgUDLY50Mj/twgUjDUzdJeRT4dAwUgFj3ZVvmqxuxAoGOhU9IPazmxTIwQKxtkVOtPop0SgYJiFgZsNf04ECgYpTmr7nfHPikDBGDn97rlE8LQIFAyxv+UUQw4O+T0ECkZYoeujm9VAoKCfgQeH/B4CBd0uD73TsINDfg+Bgl6Zbf9UTPbkCBR0Wh+whPDZESjoYpuh6bJHmiFQ0CPv/l5nSAcgUNDheOexBbQTECi4b0vgO9QjECi4bUHw5+QzECi4qeDRbsYem6wIgYJ7frp1jMHHJitCoOCW7cFvmjIHgYI7UoO2mjMIgYJ2V5+INODEdS5BoKDZ6Z6jr5g1C4GCVrtCZ2i86LsOCBQ0mheocgVrEggUNLn6dLtMM+chUNDi9G1DjDhvsusQKGiwu9l08378dEKg4LoFgRvMHolAwVWF8e0IzsxQAwQKLrL/+ElxZoYaIFBwzZem//jphEDBJfPN//HTCYGCC8ze+3kNXaCF53OreRSBWsnpmPvM3ft5DVGg2ZPDfSSpbutktYNeEKiF7Ax9TcSPn040ge6vHzZ+9rK01IkRTQ4ob4FArWMuwXlpXUYTaJ/Y/LI7xWMGKG+BQK3i6pORJwSOpwnUd3X5vZ2NlbdAoBZxysRjP5XQBBo1ofze1J7KWyBQa9gWbPhlEbShCXS1T+zi3ZlZe9JG1F6tvAUCtYS3zProkSqiV/HpfSUHn34bVTZAoBZQ8FhXsz56pIpsP2ju4YyMgxdUH0ag/GVHPWzGJ9+rR/lOUunxs6qPIVD2tgXPEL0EmSrQp7bbb2b6SlJztVPrI1DmbK+F7hS9BgeaQKX5sjxfemTN+vhaKh+wQqC85Y2M+lH0GpzoAu0S77g3sbfyFgiUtaOd4gtFr6EMXaD11znupftW/vNtTcr5/F3L84G5Pglk8+8HXaDdUh33pnW47oHccvgXlK/Sv7aguuqRdkSBBvSPv9vvhGz7ICBReQsEytaFgXep730xHU2ga96YMKjtjSvkfVLPfOUtEChXB1olFIleQyWaAz34L/vN3MQdNX9FaaF8LkPtAqMIlKkPAlaKXsJ1NAZakiD1tf8y52ZpvCuHsK79Re0RBMpS4cS2/xW9hutpDHShz5t5jl+vTpKWuvJFqocaIFCOTvcafFH0Gn5HY6DdR5f/fuht1Wy8Jq6M1D8uTnkLBMrQzpAkkmu+66ExUN/55b+fc0s1G2+oL/WIsZM6xMQob4FA+VkQJPCjHWo0Bhoyt/z3qQHVbZ3VI/qIjG/xVnLloe4/iF6DAo2B3j2q/PdD7qp286KkhvMQqIUc7fKYyh5BsTQGulZaWPbbWdKHNXzB9rDYnxGoVaQHzhK9BGVa94M+L9325scfv3GrNK7Gr7g4uikCtQbbjLCvRK9BheYd9Tt71ZWkG6MyXPma5YlH1B5CoIzkDOx7TvQa1LjxVmfJ0cxi3XMRKB/7Wr6o/38oFZw8zOstZfbm5vUQqJe7mtDusOg1VAeBereTUQ/kiV5DtRCoV9scZM41i93nVqCFPxbonYtAGbDNCPpM9Bpq4kaga7vWknwi1+qbi0DF+3X47WdEr6FG2gNdJ92blvH+fdInuuYiUOG+iXiO796lCtoDjX7C+ctTKocpuQiBivYu671LFbQH2jDd+cvmRrrmIlCxuO9dqqA90PZlZ+yZ2VHXXAQqVHbPYQIuyuUO7YFOuyn1rO3snJte0TUXgYq0IWi26CW4Snugpc/WkWpJdSaU6JqLQMUpeSnsS9FrcJn2QC/Zflo/f312ib4L5yBQYXIG3vWz6DW4TnugUtlpJ/7tq7qpKxCoKPsiEiywd6mCxkD/PWyYNGiYQ6dwXXMRqCBzAteLXoImGgP9Ji5Out/5ieLHt+mai0CFyBvTTeRFj9yg/Vt8jPqJ5zVAoCJkdR4r/qzz2uBoJi+yJnCh6CVohkC9RuHENq7+z2YEgXqLk9HDLfLm0XUQqJfYGpIi7JLaergdaIm+a+QhUFPZZoSxuKiMdu4FatvxbIC+f1IRqJnO9e/P9oPvNXAn0D3PhUp1B7+ray4CNdGOZlP0HTkhkOZA9ye1kOpJ0y/rnItATWObFaR2SV8L0BjolDZS/ftXXJG2652LQM3y68go4Zcs1kFjoFLDuVccvyBQq/hPxJ+YXDPOPRoDvatWncHLf0OglvFOwGrRS9BH68+gp/5xq9ToUUn3x6kRqBnyxnQ9JnoNOrnxKv74K52kBg+svKJrLgI1Qab1jg2pwr39oAcnhUv1dM1FoPSW+C8TvQT93H4nac+fdM1FoNQKEtofFL0GA+C9eA91JDJO3w9hTCBQz/QR14siaIVAPVHBM+0seOinIgTqgY52HcHtkptucyvQ7EO65yJQOms85du7gxuBbg6SJLl/qr65CJTK1YS234heg4G0B7qsTvwySX7JZ4GuuQiUyJGuo/UeacaK9kA7Pifn2H/zYmddcxEoDY959V5Oe6D1NzoD3dhA11wESqHAs769O2gPtHuKM9BpkbrmIlACWZEPetS3dwftgS654ZXd0i+Lb9R3/RIEarxl/vpeF7Dkxqv4VD9Jkuom6/sQKwI1WkFCuwOi10DAnf2gV/Z++Pl5nXMRqMEyI8fyvmScm9wINO/QASddcxGosRb7LxG9BBraA/3gJqmMrrkI1EiXH+78neg1ENEeaPOe6VlOuuYiUAPtb2P9I+fVaA/05k2ufUHh+dxqHkWgxlka+C/RS6CjPdB7XXmrIntyuI/9pX7rZLWPZCNQo+QOjzoueg2EtAd6plni8tUO1Wy8v37Y+NnL0lInRjRReS2FQA3yZctES3/uvSbaA33Hp+YXSX1i88vuFI8ZoLwFAjWEbVawvov6sqc90PAhWSVO1WzsW/HP687GylsgUCOcG3TXKdFrIKY90Hqf17xx1ITye1N7Km+BQA2wOSTFsmetc5UbV/mYWvPGq31iF+/OzNqTNqK2yo+qCFS3ohfDdJ+BiD/tgb5546jX33Cobuv0vs4fU336qZ34D4HqdbLXfTmi12AC7YE2K1f99rmHMzIOql9SCYHqtDpoliXPOa8V3ac6saOeUN7j7TztyGQVRIFiRz2pQ50989AlBRoDXZQhLypXzcbYUU/JNsv/fdFrMI3GQBs+KDcuV83G2FFP6FxsjJXP6a0Rzbd4tR31O1tF/E+tv2t5Prjm05DJVrreu14aA30106WN1XbUF58o1wD/grqlKCVks+g1mErrRRRcO+M5dtQTyeo+zBt2flZCEyh21NNY5D9P9BLMRhQodtQTyB0Z+V/RazCd1kB7P1jBhS9a+4vaIwhUs90R8R77wQ51WgMN61zBlS9SvSQyAtWoOCU4XfQaRKD5Fr8mrozUPy5OeQsEqs2x6Huter1ifWgC3VBf6hFjJ3WIiVHeAoFq8q7/215xaEhVRC+SsnpEH5HxLd4glx7q5CmnnNdMY6Ajv3Jx86KkhvMQqDE+D0u4KnoNwtAdbrc9LPZnBKrf1RdCt4heg0CEV/m4OLopAtXtu27D9Z6ozdJIL0OzPPGI2kMI1CW2BU097JTeWuE6SZydGRhj9ctp64VAGfsoaKo3HVmnCIGydTk+fKfoNYiHQLn6qrXXfO6oOgiUp8LkEA8/6ZKLEChLh7oOUz0QzLsgUIZsC4I88IIy7kGg/Jzse4cXfWyzBgiUnSX+r5eKXgMfCJSZc8M77xe9Bk4QKC8bQr34yCUlCJSTi4+02S16DcwgUEY+bf7sFdFr4AaBsvFbUkvVoxO9FwLlYkerxy+JXgNDCJSH/OdD14teA0sIlIU97Ud52TmXXIVAGShICnb5lELeBoGKt7fjKBwZogaBilaQFLRC9BoYQ6CC7ek4+LToNXCGQIXCP581QaAifdVhpHeeEsx1CFSc/KTgVaLXwB4CFWZXu1Fefc4Q1yBQQS4/2wxvHbkAgYqxqcWTF0WvwRIQqAgX48O9+Yx1WiBQAVaGJOK4TxchUNOduq+Tq6cBBgRqNtvSwCR86sh1CNRcmXf08r6LcemBQM1U+LL/2/jMuyYI1ERfdhr8o+g1WA0CNc2lhNClotdgPQjULB+GTsCH4rRDoOb4PrbLl6LXYEkI1AzFs/xTCkUvwpoQqAm+7DLohOg1WBUCJXfh6dAPRa/BuhAoMdvSoPhfRS/CwhAorUN3Rv9H9BosDYFSuvzngHfwzpEuCJTQ+hZj8Zk4nRAomcz+f9gleg3Wh0CJXH7Rf7bXX2jTAAiUhv27+1nRa/AICJTCgTui9oheg4dAoMbLGR+4AK/dDUIXaOH53Goe9dxAixcEx+OEDIYhCjR7criPJNVtnax2TT+PDfSzzgMOi16DJ6EJdH/9sPGzl6WlToxockB5Cw8N9NiwVmtEr8Gz0ATaJza/7E7xmAHKW3hkoHkpfikFohfhYWgC9a045frOxspbeGCgJfODnsauJaPRBBo1ofze1J7KW3heoBs79VP5cQZ0oAl0tU/s4t2ZWXvSRtRWuXyFpwX63eC2K0WvwSMRvYpP7ys5+PTbqLKBZwV6+snAuXhfkwTZftDcwxkZBy+oPuxJgV6e0jQZH9gkQvlOUulx9dcMnhNo0YLgUT+IXoTnogn0qe32m5m+ktRc7STsnhKobUWb2IOiF+HJaAKV5svyfOmRNevja21S3sJDAt3cPfoz0WvwbHSBdol33JvYW3kLjwh0b792K22iF+Hh6AKtv85xL9238p9/PaBcnX9oeT6WDg4NW1QiehEejy7QbqmOe9M6VP7zvIxyrXdoeT6GjowJegtva9IjCjSgf/zdfidk2wcBicpbxFj7LNgnn/Cfnid6EV6BJtA1b0wY1PbGFfI+qWe+8haWDvTHcX5TcBEZcxDuBy0tlM9lqB1ZbuFAsxOaJuCgELPQfuTjN9VHLBvoyQl+k3JEL8KLEAW65bEH3pffaCWFLVDZwKKBHn/SbxI+z2EmmkBXSu3vrJd4w3OLnqy1XHkLSwb63Vj/lOo+aAXGowm02xM2eaP0F/u9529V3sKCgX49IvBvOE+d2WgCbbBJlm11P7bf29RIeQvLBbpzcItZ6j9SAxWaQFu8Zb+Z7fhE57vtlbewVqDFK3p0WlokehVeiSbQhEZpxx2/2vaGP6W8hZUCzZvV8o51eM9dDJpA8+J8+jh+vUfqdVl5C+sEejq56ai9ohfhvaj2g1466rhdtVHt+6JVAt370C1/xAUQBBJ1bialQI8knDF2iF5FK26LeBMf5hCKU6AFyU2nMzpA6HRKSL+1OAmYYJwCleXssWFLmbwa2Tf2lnhX/9sAHV6ByvKOHr22GzvJHef/0b7zOyov78BU3AKVS5e1+j+xL5ptW0c3fhRnl2eCXaCOz/GGDRX3QckfXo7oOgcHe7LBMFD7q6W3goYJOYV23nt9/P+4T8RkUMEyUFnOn9Oy76fGTqxR0YaHGw/5CBcl5oVpoLJcvKxL97Srxg6tRumO8f695/xi2jxwEdtA7S9W0gcGTvrR2LHKSrZPDIl87aQZo0AjxoHaHU30G76J+LPnVz8dF9htehbtEHAX70Bl+cr8niEv0l2V4PzSkTf3ev042fODXtwDtctMbhb1FsG3+pK903r7jliCnztZs0Cg9lcwW55oGj3jmJHzjy8a7Rf5QoZ5r8LAPZYI1K546/jgzi9sMeRYkiOL4pqFxi1hdugUKLJKoHale6fd7jvozb16PnqR9/mrg5s2j1tk6L/GQMhCgTpcWjMhslGfKRvdOLPH+YzXx7Rv0PvPH512azKIYbFAHS5teqn/LUEDk5bvd+14o+KTGW+P7xvUuE/i0m9xpQOrsWCgTtmfvDoysn5g70dT5q37+pTS+5N5J3evnTf1iX7hdcP6jX976yl980AQqwZa5vQXi6c+MyQq5IabAtv0GDBgwCi7+wYMuLNrRJPaDVrcNvSZlIUZx/DuupVZO9AK+WeP/DsjI2Ol3bqMjO37T1zAuY89g4cECp4KgQJrCBRYQ6DAGgIF1hAosIZAgTUECqwhUGBNWKDJC6qYPjDODH0fNmPK0KFmTHm4rxlT4gY+YMaUBx6u2sSCUEGB/jO+qj4NO5ihThszpjRtasaUNnXMmNKhYZgZU8KaKkSR4Op1KwwOVMn6IfQz7EJMOSA0JcWMKadDzJgiD1lvxhR9//8RqDYIVDMEWgaBaoZAnRCoZgi0AgLVBoFqhkDLIFDNEKgTAtUMgVZAoNogUM3YB7ppOP0Mu+bnzJjy6qtmTDnX3Iwp8vBNZkzR9//fhEBLzDk1fI4pU/LzTRljzl/moikfQdT3/9+EQAHch0CBNQQKrCFQYA2BAmsIFFhDoMAaAgXWECiwhkCBNQQKrCFQYI0+0NW33tz3G6onf7tnw3YziytPoRq3Yc11z04xJnO4X0Qq9ZTiGW0adF9FPCVjnaw8Qfso8kDTfcavGtQgm+bJX5GeT0+u81KlKVTjsurHycRjjgbErk6W3ieeMqXua+njpA2kU0qjX3D8UnWCG6PIA+07SJbzwyaTPHehb4L99s/1Sq5NIRpX1ENyBEo6ZnznQlm+oxfxlJBE+82tIwmn/DT3TskZaNUJboyiDjRXWmy/HRdO8uQnpC3229XS9xVTqMYlRfeIq/SXoRhTdMvf7bdnD9JOkf1ftt/cM5hwysbbb7/JEWjVCe6Mog70sLTbfjvbh+SiMVePO64a+1y9goopROO2NzwSE1fpL0Mx5ntpW/Fhx6cCaP8y40L35iy4YQntlNaOQKtOcGcUdaBbpUz77TLpPNmE9+u8eG0KzbiLzefJjkBJx3wlTW8kSQPPEv9liqIkSZpA/HdxBlp1gjujqAPNkLLst2lSLtHz/zJWeqz42hSacaNjZWegpGM2SMFb8r4IHUz8l3k6ZMmuvzVaSDvFGWjVCe6Mog70oLTHfptal+jpNwSEr608hWTccr+fywIlHbNbetd+O0+6SDoly/lj+yt+paRTnIFWneDOKOpAL/ik2W//2Irm2TfUnlBw3RSScYlSmbWkY+w/g9pvN0lHSaekSTnOKcdIpzgDrTrBnVHku5n6jZDl4ogkkucuDhn7+ykU445stevQf+svtGM6TrLf/KVRKemUvZJjH/qUm4pIpzgDVZjgxijyQDfWfnnXQ02+J3nuz6S/vOdQcG0K2TjHt3jaMStumLxpcp23iKfc45e6+a83vEI7pSzQqhPcGEX/Vueq6Jv7E73VOf9/33vPVppCNc4ZKO2Y5dENu75HPeW3SW0bdP2njXZKWaAKE7SPwsEiwBoCBdYQKLCGQIE1BAqsIVBgDYECawgUWEOgwBoCBdYQKLCGQIE1BAqsIVBgDYECawgUWEOgwBoCBdYQKLCGQIE1BAqsIVBgDYECawgUWEOgwBoCBdYQKK0cabvoJVgbAqWFQHVCoLQQqE4IlJYj0NLRQcdEr8OyECgtR6DPNPlW9DKsC4HSsgea3GC36FVYGAKllSPdJ3UqEb0KC0OgtHKkeq9Lc0WvwsIQKK0c6T159C0XRC/DuhAoLceLpOx6E0Uvw7oQKC3nftCptQ+JXodlIVBazkDzm/cTvQ7LQqDAGgIF1hAosIZAgTUECqwhUGANgQJrCBRYQ6DAGgIF1hAosIZAgTUECqwhUGANgQJrCBRYQ6DAGgIF1hAosIZAgTUECqwhUGANgQJrCBRYQ6DA2v8DpWy8KSImtxAAAAAASUVORK5CYII=" /><!-- --></p>
 <p>It looks like a minimum around <span class="math inline">\(k =
 150\)</span>.</p>
 <p>We find the analytical solution by first finding critical points:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dl <span class="ot">&lt;-</span> <span class="fu">der</span>(l, k)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dl</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c:         k           1</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ───────────────── - ─</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         ____________   5</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        ╱  2             </span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2⋅╲╱  k  + 90000</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>crit_points <span class="ot">&lt;-</span> <span class="fu">solve_sys</span>(dl, k)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>crit_points</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Solution 1:</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   k =  200⋅√21</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       ───────</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          7</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>best_k <span class="ot">&lt;-</span> crit_points[[<span class="dv">1</span>]]<span class="sc">$</span>k</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>best_k</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: 200⋅√21</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ───────</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       7</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>dl <span class="ot">&lt;-</span> <span class="fu">der</span>(l, k)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>dl</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; c:         k           1</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt;    ───────────────── - ─</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt;         ____________   5</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;        ╱  2             </span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;    2⋅╲╱  k  + 90000</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>crit_points <span class="ot">&lt;-</span> <span class="fu">solve_sys</span>(dl, k)</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>crit_points</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; k = 200⋅√21</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; ───────</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;    7</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>best_k <span class="ot">&lt;-</span> crit_points[[<span class="dv">1</span>]]<span class="sc">$</span>k</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>best_k</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; c: 200⋅√21</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt;    ───────</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt;       7</span></span></code></pre></div>
 <p>The type of the critical point is found by considering the
 Hessian:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">eval</span>(<span class="fu">as_expr</span>(<span class="fu">der</span>(dl, k)), <span class="fu">list</span>(<span class="at">k =</span> <span class="fu">as_expr</span>(best_k)))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.001283121</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">eval</span>(<span class="fu">as_expr</span>(<span class="fu">der</span>(dl, k)), <span class="fu">list</span>(<span class="at">k =</span> <span class="fu">as_expr</span>(best_k)))</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [1] 0.001283121</span></span></code></pre></div>
 <p>Thus the critical point is indeed a minimum as suggested by the
 plot.</p>
 <p>The fastest route is thus obtained for <span class="math display">\[
   k = \frac{200 \sqrt{21}}{7} \approx 130.93 .
 \]</span> It has a length of (in meters)</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>DC_best <span class="ot">&lt;-</span> BC <span class="sc">-</span> best_k</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>AD_best <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(AB<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> best_k<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>AD_best</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: 500⋅√21</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ───────</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       7</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>best_route <span class="ot">&lt;-</span> AD_best <span class="sc">+</span> DC_best</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>best_route</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: 300⋅√21          </span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ─────── + 100⋅√91</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       7</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">as_expr</span>(best_route)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1150.335</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>DC_best <span class="ot">&lt;-</span> BC <span class="sc">-</span> best_k</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>AD_best <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(AB<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> best_k<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>AD_best</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; c: 500⋅√21</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt;    ───────</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt;       7</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>best_route <span class="ot">&lt;-</span> AD_best <span class="sc">+</span> DC_best</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>best_route</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; c: 300⋅√21          </span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt;    ─────── + 100⋅√91</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt;       7</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="fu">as_expr</span>(best_route)</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; [1] 1150.335</span></span></code></pre></div>
 <p><span class="math display">\[
   \frac{300 \sqrt{21}}{7} + 100 \sqrt{91} \approx 1150.34
 \]</span> and takes (in seconds)</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>best_l <span class="ot">&lt;-</span> <span class="fu">subs</span>(l, <span class="st">&quot;k&quot;</span>, best_k)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>best_l</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: 30⋅√21 + 20⋅√91</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">as_expr</span>(best_l)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 328.2651</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>best_l <span class="ot">&lt;-</span> <span class="fu">subs</span>(l, <span class="st">&quot;k&quot;</span>, best_k)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>best_l</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; c: 30⋅√21 + 20⋅√91</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="fu">as_expr</span>(best_l)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; [1] 328.2651</span></span></code></pre></div>
 <p><span class="math display">\[
   30 \sqrt{21} + 20 \sqrt{91} \approx 328.27
 \]</span></p>

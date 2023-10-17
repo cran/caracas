@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caracas)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(caracas)</span></code></pre></div>
 <p>It is relatively easy to extend <code>caracas</code> by calling
 <code>SymPy</code> functions directly.</p>
 <p>This can be achived using <code>sympy_func(x, fun, ...)</code> that
@@ -356,35 +356,35 @@ shows that there are two relevant functions in <code>SymPy</code>:
 <code>cofactor</code> and <code>cofactor_matrix</code>.</p>
 <p>If these functions are not available in <code>caracas</code> they can
 be made so using <code>sympy_func</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>cofactor_matrix <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sympy_func</span>(x, <span class="st">&quot;cofactor_matrix&quot;</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>cofactor <span class="ot">&lt;-</span> <span class="cf">function</span>(x, i, j) {</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Python indexing starts at 0 - thus subtract 1 to convert from R indexing</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># to Python indexing</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sympy_func</span>(x, <span class="st">&quot;cofactor&quot;</span>, i <span class="sc">-</span> <span class="dv">1</span>, j <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix_sym</span>(<span class="dv">3</span>, <span class="dv">3</span>, <span class="st">&quot;a&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>CC <span class="ot">&lt;-</span> <span class="fu">cofactor_matrix</span>(A)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>CC</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: ⎡a₂₂⋅a₃₃ - a₂₃⋅a₃₂   -a₂₁⋅a₃₃ + a₂₃⋅a₃₁  a₂₁⋅a₃₂ - a₂₂⋅a₃₁ ⎤</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢                                                          ⎥</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢-a₁₂⋅a₃₃ + a₁₃⋅a₃₂  a₁₁⋅a₃₃ - a₁₃⋅a₃₁   -a₁₁⋅a₃₂ + a₁₂⋅a₃₁⎥</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢                                                          ⎥</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎣a₁₂⋅a₂₃ - a₁₃⋅a₂₂   -a₁₁⋅a₂₃ + a₁₃⋅a₂₁  a₁₁⋅a₂₂ - a₁₂⋅a₂₁ ⎦</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>cc <span class="ot">&lt;-</span> <span class="fu">cofactor</span>(A, <span class="dv">1</span>, <span class="dv">1</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>cc</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: a₂₂⋅a₃₃ - a₂₃⋅a₃₂</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>cofactor_matrix <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">sympy_func</span>(x, <span class="st">&quot;cofactor_matrix&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>}</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>cofactor <span class="ot">&lt;-</span> <span class="cf">function</span>(x, i, j) {</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="co"># Python indexing starts at 0 - thus subtract 1 to convert from R indexing</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="co"># to Python indexing</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="fu">sympy_func</span>(x, <span class="st">&quot;cofactor&quot;</span>, i <span class="sc">-</span> <span class="dv">1</span>, j <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix_sym</span>(<span class="dv">3</span>, <span class="dv">3</span>, <span class="st">&quot;a&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>CC <span class="ot">&lt;-</span> <span class="fu">cofactor_matrix</span>(A)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>CC</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; c: ⎡a₂₂⋅a₃₃ - a₂₃⋅a₃₂   -a₂₁⋅a₃₃ + a₂₃⋅a₃₁  a₂₁⋅a₃₂ - a₂₂⋅a₃₁ ⎤</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;    ⎢                                                          ⎥</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;    ⎢-a₁₂⋅a₃₃ + a₁₃⋅a₃₂  a₁₁⋅a₃₃ - a₁₃⋅a₃₁   -a₁₁⋅a₃₂ + a₁₂⋅a₃₁⎥</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt;    ⎢                                                          ⎥</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt;    ⎣a₁₂⋅a₂₃ - a₁₃⋅a₂₂   -a₁₁⋅a₂₃ + a₁₃⋅a₂₁  a₁₁⋅a₂₂ - a₁₂⋅a₂₁ ⎦</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>cc <span class="ot">&lt;-</span> <span class="fu">cofactor</span>(A, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>cc</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; c: a₂₂⋅a₃₃ - a₂₃⋅a₃₂</span></span></code></pre></div>
 <p>We get the right answer</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">t</span>(CC) <span class="sc">/</span> <span class="fu">det</span>(A)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>P <span class="ot">&lt;-</span> A <span class="sc">%*%</span> B</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>P <span class="sc">%&gt;%</span> <span class="fu">simplify</span>()</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: ⎡1  0  0⎤</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢       ⎥</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢0  1  0⎥</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢       ⎥</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎣0  0  1⎦</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">t</span>(CC) <span class="sc">/</span> <span class="fu">det</span>(A)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>P <span class="ot">&lt;-</span> A <span class="sc">%*%</span> B</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>P <span class="sc">%&gt;%</span> <span class="fu">simplify</span>()</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; c: ⎡1  0  0⎤</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt;    ⎢       ⎥</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;    ⎢0  1  0⎥</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;    ⎢       ⎥</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;    ⎣0  0  1⎦</span></span></code></pre></div>
 
 
 

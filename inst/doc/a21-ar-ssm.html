@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">21 - Concentration and covariance matrix in
 an autoregressive model and in a dynamic linear model</h1>
 <h4 class="author">Mikkel Meyer Andersen and Søren Højsgaard</h4>
-<h4 class="date">Fri Aug 11 14:35:16 2023</h4>
+<h4 class="date">Tue Oct 17 13:04:06 2023</h4>
 
 
 <div id="TOC">
@@ -350,7 +350,7 @@ an autoregressive model and in a dynamic linear model</h1>
 </ul>
 </div>
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caracas)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(caracas)</span></code></pre></div>
 <div id="autoregressive-model-ar1" class="section level2" number="0.1">
 <h2><span class="header-section-number">0.1</span> Autoregressive model
 (<span class="math inline">\(AR(1)\)</span>)</h2>
@@ -367,18 +367,18 @@ e= \left[\begin{matrix}e_{0}\\e_{1}\\e_{2}\\e_{3}\end{matrix}\right] =
 \left[\begin{matrix}x_{0}\\x_{1}\\x_{2}\\x_{3}\end{matrix}\right] = L_1
 x
 \]</span></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>L1 <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="dv">4</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>L1[<span class="fu">cbind</span>(<span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">:</span>N), <span class="dv">1</span><span class="sc">:</span>N)] <span class="ot">&lt;-</span> <span class="st">&quot;-a&quot;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>L1 <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(L1)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>L1 <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="dv">4</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>L1[<span class="fu">cbind</span>(<span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">:</span>N), <span class="dv">1</span><span class="sc">:</span>N)] <span class="ot">&lt;-</span> <span class="st">&quot;-a&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>L1 <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(L1)</span></code></pre></div>
 <p>Since <span class="math inline">\(\mathbf{Var}(e)=v^2 I\)</span> we
 have <span class="math inline">\(\mathbf{Var}(e)=v^2 I=L \mathbf{Var}(x)
 L&#39;\)</span> so the covariance matrix of <span class="math inline">\(x\)</span> is <span class="math inline">\(V_1=\mathbf{Var}(x) = v^2 L^- (L^-)&#39;\)</span>
 while the concentration matrix (the inverse covariances matrix) is <span class="math inline">\(K=v^{-2}L&#39; L\)</span>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">def_sym</span>(v2)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>L1inv <span class="ot">&lt;-</span> <span class="fu">inv</span>(L1)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>V1 <span class="ot">&lt;-</span> v2 <span class="sc">*</span> L1inv <span class="sc">%*%</span> <span class="fu">t</span>(L1inv)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>K1 <span class="ot">&lt;-</span> (<span class="fu">t</span>(L1) <span class="sc">%*%</span> L1) <span class="sc">/</span> v2</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">def_sym</span>(v2)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>L1inv <span class="ot">&lt;-</span> <span class="fu">inv</span>(L1)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>V1 <span class="ot">&lt;-</span> v2 <span class="sc">*</span> L1inv <span class="sc">%*%</span> <span class="fu">t</span>(L1inv)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>K1 <span class="ot">&lt;-</span> (<span class="fu">t</span>(L1) <span class="sc">%*%</span> L1) <span class="sc">/</span> v2</span></code></pre></div>
 <p><span class="math display">\[\begin{align}
     K_1 &amp;= \left[\begin{matrix}\frac{a^{2} + 1}{v_{2}} &amp; -
 \frac{a}{v_{2}} &amp; 0 &amp; 0\\- \frac{a}{v_{2}} &amp; \frac{a^{2} +
@@ -412,41 +412,41 @@ with <span class="math inline">\(y_i=b x_i + u_i\)</span> for <span class="math 
 \left[\begin{matrix}x_{0}\\x_{1}\\x_{2}\\x_{3}\\y_{1}\\y_{2}\\y_{3}\end{matrix}\right]
 = L_2 (x,y)
 \]</span> where</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>L2 <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="st">&quot;1&quot;</span>, <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>N)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>L2[<span class="fu">cbind</span>(<span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">:</span>N), <span class="dv">1</span><span class="sc">:</span>N)] <span class="ot">&lt;-</span> <span class="st">&quot;-a&quot;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>L2[<span class="fu">cbind</span>(<span class="dv">1</span> <span class="sc">+</span> N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">:</span>N), <span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">:</span>N)] <span class="ot">&lt;-</span> <span class="st">&quot;-b&quot;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>L2 <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(L2)</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Veu <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="dv">1</span>, <span class="dv">7</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(Veu)[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="st">&quot;v2&quot;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(Veu)[<span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="st">&quot;w2&quot;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>Veu</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7]</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,] &quot;v2&quot; &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot; </span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,] &quot;0&quot;  &quot;v2&quot; &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot; </span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3,] &quot;0&quot;  &quot;0&quot;  &quot;v2&quot; &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot; </span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4,] &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;v2&quot; &quot;0&quot;  &quot;0&quot;  &quot;0&quot; </span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5,] &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;w2&quot; &quot;0&quot;  &quot;0&quot; </span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [6,] &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;w2&quot; &quot;0&quot; </span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [7,] &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;w2&quot;</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>Veu <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(Veu)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>Veu</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; c: ⎡v₂  0   0   0   0   0   0 ⎤</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢0   v₂  0   0   0   0   0 ⎥</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢0   0   v₂  0   0   0   0 ⎥</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢0   0   0   v₂  0   0   0 ⎥</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢0   0   0   0   w₂  0   0 ⎥</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢0   0   0   0   0   w₂  0 ⎥</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ⎣0   0   0   0   0   0   w₂⎦</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>L2inv <span class="ot">&lt;-</span> <span class="fu">inv</span>(L2) </span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>V2 <span class="ot">&lt;-</span> L2inv <span class="sc">%*%</span> Veu <span class="sc">%*%</span> <span class="fu">t</span>(L2inv) </span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>K2 <span class="ot">&lt;-</span> <span class="fu">t</span>(L2) <span class="sc">%*%</span> <span class="fu">inv</span>(Veu) <span class="sc">%*%</span> L2</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>L2 <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="st">&quot;1&quot;</span>, <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>N)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>L2[<span class="fu">cbind</span>(<span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">:</span>N), <span class="dv">1</span><span class="sc">:</span>N)] <span class="ot">&lt;-</span> <span class="st">&quot;-a&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>L2[<span class="fu">cbind</span>(<span class="dv">1</span> <span class="sc">+</span> N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">:</span>N), <span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">:</span>N)] <span class="ot">&lt;-</span> <span class="st">&quot;-b&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>L2 <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(L2)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>Veu <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="dv">1</span>, <span class="dv">7</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">diag</span>(Veu)[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="st">&quot;v2&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">diag</span>(Veu)[<span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="st">&quot;w2&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>Veu</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7]</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; [1,] &quot;v2&quot; &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot; </span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; [2,] &quot;0&quot;  &quot;v2&quot; &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot; </span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; [3,] &quot;0&quot;  &quot;0&quot;  &quot;v2&quot; &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot; </span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; [4,] &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;v2&quot; &quot;0&quot;  &quot;0&quot;  &quot;0&quot; </span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; [5,] &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;w2&quot; &quot;0&quot;  &quot;0&quot; </span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; [6,] &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;w2&quot; &quot;0&quot; </span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; [7,] &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;0&quot;  &quot;w2&quot;</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>Veu <span class="ot">&lt;-</span> <span class="fu">as_sym</span>(Veu)</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>Veu</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; c: ⎡v₂  0   0   0   0   0   0 ⎤</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt;    ⎢0   v₂  0   0   0   0   0 ⎥</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt;    ⎢0   0   v₂  0   0   0   0 ⎥</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt;    ⎢0   0   0   v₂  0   0   0 ⎥</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt;    ⎢0   0   0   0   w₂  0   0 ⎥</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt;    ⎢0   0   0   0   0   w₂  0 ⎥</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt;    ⎢                          ⎥</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt;    ⎣0   0   0   0   0   0   w₂⎦</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>L2inv <span class="ot">&lt;-</span> <span class="fu">inv</span>(L2) </span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>V2 <span class="ot">&lt;-</span> L2inv <span class="sc">%*%</span> Veu <span class="sc">%*%</span> <span class="fu">t</span>(L2inv) </span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a>K2 <span class="ot">&lt;-</span> <span class="fu">t</span>(L2) <span class="sc">%*%</span> <span class="fu">inv</span>(Veu) <span class="sc">%*%</span> L2</span></code></pre></div>
 <p><span class="math display">\[\begin{align} K_2 &amp;=
 \left[\begin{matrix}\frac{a^{2}}{v_{2}} + \frac{1}{v_{2}} &amp; -
 \frac{a}{v_{2}} &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0\\-

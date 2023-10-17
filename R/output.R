@@ -22,7 +22,7 @@ get_caracas_out <- function(x,
     stop("Unexpected")
   }
   
-  method <- match.arg(method, choices = c("utf8", "prettyascii", "ascii"))
+  method <- match.arg(method, choices = c("utf8", "prettyascii", "ascii", "compactascii"))
   
   py <- get_py()
   
@@ -42,6 +42,29 @@ get_caracas_out <- function(x,
   } else if (method == "ascii") {
     # 'ascii'
     python_strings_to_r(get_sympy()$sstr(x$pyobj))
+  } else if (method == "compactascii") {
+    # 'compactascii'
+    
+    # z <- if (rowvec && symbol_is_matrix(x) && ncol(x) == 1L && nrow(x) > 1L) {
+    #   suffix <- "^T"
+    #   reticulate::py_capture_output(py$print_caracas(t(x)$pyobj))
+    # } else {
+    #   reticulate::py_capture_output(py$print_caracas(x$pyobj))
+    # }
+    # 
+    # # Remove "empty" rows in matrix:
+    # if (symbol_is_matrix(x)) {
+    #   z <- gsub("\\n\\[[ \t]+\\]", "", z)
+    # }
+    
+    z <- python_strings_to_r(get_sympy()$sstr(x$pyobj))
+    if (symbol_is_matrix(x)) {
+      z <- gsub("\\n\\[", "\n [", z)
+      z <- gsub("^Matrix\\(\\[\\n \\[", "[[", z)
+      z <- gsub("\\)$", "", z)
+    }
+    z
+    
   } else {
     stopifnot(method == "utf8")
     
@@ -72,7 +95,7 @@ get_caracas_out <- function(x,
 #' 
 #' @param x A `caracas_symbol`
 #' @param prompt Which prompt/prefix to print (default: 'c: ')
-#' @param method What way to print (`utf8`, `prettyascii` or `ascii`)
+#' @param method What way to print (`utf8`, `prettyascii`, `ascii`, `compactascii`)
 #' @param rowvec `FALSE` to print column vectors as is
 #' @param \dots not used
 #'
@@ -104,6 +127,18 @@ print.caracas_symbol <- function(x,
 #'
 #' @concept output
 #' 
+#' @examples 
+#' if (has_sympy()) {
+#'   x <- symbol('x')
+#'   solve_sys(x^2, -1, x)
+#'   
+#'   y <- symbol("y")
+#'   lhs <- cbind(3*x*y - y, x)
+#'   rhs <- cbind(-5*x, y+4)
+#'   sol <- solve_sys(lhs, rhs, list(x, y))
+#'   sol
+#' }
+#' 
 #' @export
 print.caracas_solve_sys_sol <- function(x, 
                                         simplify = getOption("caracas.print.sol.simplify", default = TRUE), 
@@ -113,34 +148,48 @@ print.caracas_solve_sys_sol <- function(x,
   if (simplify) {
     if (length(x) == 0L) {
       cat("No solutions\n")
+      return(invisible(x))
     }
     
-    for (i in seq_along(x)) {
-      cat("Solution ", i, ":\n", sep = "")
-      #print(i)
+    num_vars <- length(names(x[[1L]]))
+    # If there is only one variable, do more compact printing:
+    
+    if (num_vars == 1L) {
+      nm <- names(x[[1L]])
       
-      nms <- names(x[[i]])
-      nms <- sprintf(paste0("%-", max(nchar(nms)), "s"), nms)
-      
-      vals <- lapply(x[[i]], get_caracas_out, prompt = "", ...)
-      
-      prefix <- "  "
-      nms <- paste0(prefix, nms, " = ")
-      
-      #vals <- lapply(vals, function(l) paste0(prefix, l))
-      vals <- lapply(seq_along(vals), function(j) {
-        indent_not_first_line(vals[[j]], nchar(nms[j]))
-      })
-      
-      for (j in seq_along(nms)) {
-        cat(nms[j], vals[[j]], "\n", sep =)
+      for (i in seq_along(x)) {
+        val <- get_caracas_out(x[[i]][[1L]], prompt = "", ...)
+        cat(nm, " = ", val, "\n", sep = "")
       }
-      
-      # xi <- paste0(nms, " = ", vals)
-      # xi <- paste0("{", paste0(xi, collapse = ", "), "}")
-      # cat(xi, "\n", sep = "")
+    } else {
+      # More variables:
+      for (i in seq_along(x)) {
+        cat("Solution ", i, ":\n", sep = "")
+        #print(i)
+        
+        nms <- names(x[[i]])
+        nms <- sprintf(paste0("%-", max(nchar(nms)), "s"), nms)
+        
+        vals <- lapply(x[[i]], get_caracas_out, prompt = "", ...)
+        
+        prefix <- "  "
+        nms <- paste0(prefix, nms, " = ")
+        
+        #vals <- lapply(vals, function(l) paste0(prefix, l))
+        vals <- lapply(seq_along(vals), function(j) {
+          indent_not_first_line(vals[[j]], nchar(nms[j]))
+        })
+        
+        for (j in seq_along(nms)) {
+          cat(nms[j], vals[[j]], "\n", sep =)
+        }
+        
+        # xi <- paste0(nms, " = ", vals)
+        # xi <- paste0("{", paste0(xi, collapse = ", "), "}")
+        # cat(xi, "\n", sep = "")
+      }
     }
-    
+
   } else {
     y <- x
     class(y) <- setdiff(class(y), "caracas_solve_sys_sol")
@@ -150,41 +199,6 @@ print.caracas_solve_sys_sol <- function(x,
   return(invisible(x))
 }
 
-
-#' Print factor list
-#' 
-#' @param x A `caracas_factor_list`
-#' @param \dots Passed to [print.caracas_symbol()]
-#'
-#' @concept output
-#' 
-#' @export
-print.caracas_factor_list <- function(x, ...) {
-  ensure_sympy()
-  
-  z <- lapply(x, function(y) {
-    paste0("UnevaluatedExpr(", as.character(y), ")")
-  })
-  
-  w <- paste0(z, collapse = "*")
-  
-  v <- eval_to_symbol(w)
-  print(v)
-  
-  return(invisible(v))
-}
-
-#' Print factor list
-#'
-#' @param x factor list
-#' @param \dots Other arguments passed along
-#' @concept output
-#' @export
-tex.caracas_factor_list <- function(x, ...){
-  a <- unlist(lapply(x, tex, ...))
-  o <- paste(a, collapse = "  ")
-  o
-}
 
 
 #' Export object to TeX

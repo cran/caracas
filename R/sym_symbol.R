@@ -239,16 +239,29 @@ extract_elements <- function(x) {
 c.caracas_symbol <- function(...) {
   ensure_sympy()
   
-  # FIXME: To Python vector?
-  #        In that case, see der() too.
-  #x <- list(...)
-  x <- vectorfy(list(...))
+  # v <- vector_sym(2)
+  # c(v)
+  # c(v, v)
+  # A <- matrix_sym(3, 4)
+  # c(A)
+  # c(A, A)
+  z <- list(...)
+  z <- lapply(z, as_character)
+  z <- unlist(z)
+  z <- base::c(z)
+  z <- as_sym(z)
+  return(z)
   
-  # FIXME: Use? In that case ensure that all "[..., ...]" from elsewhere (e.g. der())
-  #        is also caught.
-  class(x) <- c("caracas_vector", class(x))
-
-  return(x)
+  # # FIXME: To Python vector?
+  # #        In that case, see der() too.
+  # #x <- list(...)
+  # x <- vectorfy(list(...))
+  # 
+  # # FIXME: Use? In that case ensure that all "[..., ...]" from elsewhere (e.g. der())
+  # #        is also caught.
+  # class(x) <- c("caracas_vector", class(x))
+  # 
+  # return(x)
 }
 
 
@@ -339,10 +352,21 @@ sympy_func <- function(x, fun, ...) {
     return(a)
   })
   
+  convert_res <- function(o) {
+    o <- if (is.list(o)) {
+      lapply(o, construct_symbol_from_pyobj)
+    } else {
+      construct_symbol_from_pyobj(o)
+    }
+    
+    o
+  }
+  
   # See if x has fun method
   out <- tryCatch({
       p <- do.call(x$pyobj[[fun]], args)
-      res <- construct_symbol_from_pyobj(p)
+      #res <- construct_symbol_from_pyobj(p)
+      res <- convert_res(p)
       res
   }, error = function(cond) {
       
@@ -350,7 +374,11 @@ sympy_func <- function(x, fun, ...) {
     s <- get_sympy()
     args <- c(x$pyobj, args)
     p <- do.call(s[[fun]], args)
-    res <- construct_symbol_from_pyobj(p)
+    
+    #print(p)
+    
+    #res <- construct_symbol_from_pyobj(p)
+    res <- convert_res(p)
     return(res)
   })
   
@@ -426,52 +454,3 @@ as_character <- function(x) {
 
 
 
-#' Create list of factors as in a product
-#'
-#' @param ... factors
-#'
-#' @examples
-#' if (has_sympy()) {
-#'   d <- 2
-#'   m <- matrix_sym(d, d)
-#'   mi <- inv(m)
-#'   det_m <- det(m)
-#'   fl <- as_factor_list(1/det_m, det_m * mi)
-#'   tex(fl)
-#'   m <- matrix(1:4, nrow=2)
-#'   mi <- solve(m)
-#'   det_m <- det(m)
-#'   fl <- as_factor_list(1 / as_sym(det_m), det_m * mi)
-#'   tex(fl)
-#' }
-#' 
-#' @concept caracas_symbol
-#' 
-#' @export
-as_factor_list <- function(...) {
-  lst <- list(...)
-  out <- lapply(lst, as_sym)  
-  class(out) <- c("caracas_factor_list", "list")
-  out
-}
-
-#' Divide or multiply matrix with factor.
-#' @name mat_div_mult
-#' @param m Matrix
-#' @param s Factor
-#' 
-#' @concept caracas_symbol
-#' 
-#' @export
-#' @rdname mat_div_mult
-
-mat_factor_div <- function(m, s) {
-  numer <- 
-    as_factor_list(paste0("1/S(", s, ")"), s * m)
-}
-
-#' @export
-#' @rdname mat_div_mult
-mat_factor_mult <- function(m, s) {
-  as_factor_list(s, m / s) 
-}
