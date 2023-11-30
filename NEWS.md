@@ -1,3 +1,11 @@
+# caracas 2.1.1
+
+* `print(..., method = "compactascii")`: column vector as transposed row vector
+   and handling `caracas_scaled_matrix`
+* `LUdecomposition()`, `chol()` (Cholesky), `svd_()` (Singular Value decomposition) added.
+* `cumsum()` added.
+* `as.expression()` (alias for `as_expr()`) and `as.function()` (alias for `as_func()`) cf. #75
+
 # caracas 2.1.0
 
 * Added `knitr` engine `rtex` (see vignette "Chunk engine for easy tex output in Rmarkdown and Quarto")

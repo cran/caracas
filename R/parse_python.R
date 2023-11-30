@@ -21,7 +21,13 @@ python_strings_to_r <- function(xstr, replace_I = TRUE) {
   
   # Inf
   xstr <- gsub("oo", "Inf", xstr, fixed = TRUE)
-
+  
+  # Other functions
+  # Abs()
+  xstr <- gsub("(^|[^A-Za-z]+)Abs\\(", "\\1abs(", xstr, ignore.case = FALSE, perl = TRUE)
+  # conjugate()
+  xstr <- gsub("(^|[^A-Za-z]+)conjugate\\(", "\\1Conj(", xstr, ignore.case = FALSE, perl = TRUE)
+  
   return(xstr)
 }
 
@@ -192,6 +198,15 @@ expr_has_vars <- function(x) {
 #'
 #' @param x caracas_symbol
 #' @param first_doit Try `doit()` first
+#' 
+#' @examples 
+#' if (has_sympy()) {
+#'   v <- vector_sym(2)
+#'   x <- as_expr(v)
+#'   x
+#'   y <- as.expression(v)
+#'   y
+#' }
 #'
 #' @concept caracas_symbol
 #'
@@ -247,3 +262,25 @@ as_expr.caracas_symbol <- function(x, first_doit = TRUE) {
   }
 }
 
+
+
+#' @export
+as_expr.caracas_solve_sys_sol <- function(x, first_doit = TRUE) {
+  out <- lapply(x, lapply, as_expr, first_doit)
+  return(out)
+}
+
+
+#' @rdname as_expr
+#' @param \dots not used
+#' @export
+as.expression.caracas_symbol <- function(x, ...) {
+  as_expr(x, ...)
+}
+
+#' @rdname as_expr
+#' @param \dots not used
+#' @export
+as.expression.caracas_solve_sys_sol <- function(x, ...) {
+  as_expr(x, ...)
+}

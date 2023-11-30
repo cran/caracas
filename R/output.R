@@ -13,7 +13,7 @@ indent_not_first_line <- function(x, indent = 0) {
 }
 
 get_caracas_out <- function(x, 
-                            prompt = getOption("caracas.prompt", default = "[caracas]: "), 
+                            prompt = getOption("caracas.prompt", default = "c: "), 
                             method = getOption("caracas.print.method", default = "utf8"),
                             rowvec = getOption("caracas.print.rowvec", default = TRUE)) {
   ensure_sympy()
@@ -45,23 +45,26 @@ get_caracas_out <- function(x,
   } else if (method == "compactascii") {
     # 'compactascii'
     
-    # z <- if (rowvec && symbol_is_matrix(x) && ncol(x) == 1L && nrow(x) > 1L) {
-    #   suffix <- "^T"
-    #   reticulate::py_capture_output(py$print_caracas(t(x)$pyobj))
-    # } else {
-    #   reticulate::py_capture_output(py$print_caracas(x$pyobj))
-    # }
-    # 
-    # # Remove "empty" rows in matrix:
-    # if (symbol_is_matrix(x)) {
-    #   z <- gsub("\\n\\[[ \t]+\\]", "", z)
-    # }
+    suffix <- ""
+    obj <- x$pyobj
     
-    z <- python_strings_to_r(get_sympy()$sstr(x$pyobj))
+    if (rowvec && symbol_is_matrix(x) && ncol(x) == 1L && nrow(x) > 1L) {
+      suffix <- "^T"
+      obj <- obj$T
+    }
+    
+    z <- python_strings_to_r(get_sympy()$sstr(obj))
     if (symbol_is_matrix(x)) {
       z <- gsub("\\n\\[", "\n [", z)
       z <- gsub("^Matrix\\(\\[\\n \\[", "[[", z)
       z <- gsub("\\)$", "", z)
+      
+      z <- gsub("^Matrix\\(\\[", "[", z)
+      #z <- gsub("Matrix\\(\\[(.*)\\]\\)", "[(\\1)]", z)
+      #z <- gsub("Matrix\\(", "", z)
+    } else if (grepl("*Matrix", z)) {
+      # Probably caracas_scaled_matrix, but we do not have x's class
+      z <- gsub("Matrix\\((.*)\\)", "\\1", z)
     }
     z
     

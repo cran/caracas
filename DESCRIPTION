@@ -1,5 +1,5 @@
 Package: caracas
-Version: 2.1.0
+Version: 2.1.1
 Title: Computer Algebra
 Authors@R: c(
     person(given = "Mikkel Meyer", family = "Andersen",
@@ -23,8 +23,8 @@ BugReports: https://github.com/r-cas/caracas/issues
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-10-17 11:04:13 UTC; mikl
+Packaged: 2023-11-30 14:39:57 UTC; mikl
 Author: Mikkel Meyer Andersen [aut, cre, cph],
   Søren Højsgaard [aut, cph]
 Repository: CRAN
-Date/Publication: 2023-10-17 12:10:02 UTC
+Date/Publication: 2023-11-30 15:30:02 UTC

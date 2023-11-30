@@ -23,6 +23,11 @@
 #'   f2 <- as_func(e, order = sort(all_vars(e)), vec_arg = TRUE)
 #'   f2
 #'   f2(c(1,2,3,4,5))
+#'   
+#'   f1a <- as.function(e)
+#'   f1a
+#'   f1a(1, 2, 3, 4, 5)
+#'   f1(1, 2, 3, 4, 5)
 #' }
 #' @concept caracas_symbol
 #' @export
@@ -41,3 +46,9 @@ as_func <- function(x, order=NULL, vec_arg=FALSE){
 }
 
 
+#' @rdname as_func
+#' @param \dots not used
+#' @export
+as.function.caracas_symbol <- function(x, ...) {
+  as_func(x, ...)
+}
